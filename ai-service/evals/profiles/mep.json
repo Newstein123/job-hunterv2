@@ -1,0 +1,63 @@
+{
+  "name": "Kyaw Min",
+  "email": "kyaw.min@example.org",
+  "phone": "+95 9 400 000 002",
+  "headline": "M&E / ACMV Site Engineer",
+  "summary": "Mechanical engineer with 5 years of M&E site experience in commercial buildings.",
+  "skills": [
+    {
+      "name": "AutoCAD"
+    },
+    {
+      "name": "ACMV"
+    },
+    {
+      "name": "Microsoft Office"
+    }
+  ],
+  "experiences": [
+    {
+      "id": "exp1",
+      "title": "M&E Site Engineer",
+      "company": "Delta Building Services Ltd",
+      "start": "2020-01-01",
+      "end": null,
+      "summary": "Site engineer for ACMV, plumbing and fire protection installation in commercial buildings.",
+      "achievements": [
+        "Supervised installation of chillers, AHUs and ducting",
+        "Coordinated with consultants and sub-contractors on M&E works",
+        "Carried out testing and commissioning of ACMV systems",
+        "Prepared method statements and as-built drawings"
+      ],
+      "skills": [
+        "ACMV",
+        "AutoCAD"
+      ]
+    },
+    {
+      "id": "exp2",
+      "title": "Maintenance Engineer",
+      "company": "Sunrise Hotel Yangon",
+      "start": "2018-05-01",
+      "end": "2019-12-31",
+      "summary": "Preventive maintenance of building mechanical systems.",
+      "achievements": [
+        "Maintained chillers, pumps and generators"
+      ],
+      "skills": []
+    }
+  ],
+  "projects": [],
+  "education": [
+    {
+      "id": "e1",
+      "institution": "Yangon Technological University",
+      "degree": "Bachelor of Engineering",
+      "field": "Mechanical"
+    }
+  ],
+  "languages": [
+    "English",
+    "Myanmar"
+  ]
+}

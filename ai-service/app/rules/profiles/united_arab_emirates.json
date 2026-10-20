@@ -1,0 +1,6 @@
+{
+  "notes": "Curated United Arab Emirates profile (Dubai). Only the sending timezone is set; add conventions here only once they are validated.",
+  "sending_rules": {
+    "timezone": "Asia/Dubai"
+  }
+}

@@ -1,0 +1,24 @@
+Senior Backend Engineer (PHP/Laravel) — Merlion Pay, Singapore
+
+Merlion Pay is a fintech company building payment infrastructure for merchants across Southeast Asia.
+
+What you'll do
+- Design and build REST APIs for our merchant payments platform
+- Own backend services end to end, from design to production
+- Improve performance and reliability of high-traffic payment endpoints
+- Mentor junior engineers and review code
+
+Requirements
+- 5+ years of backend development experience
+- Strong PHP and Laravel experience
+- Solid MySQL skills
+- Experience designing REST APIs
+- Experience with Docker
+
+Nice to have
+- Redis
+- AWS
+- Kubernetes
+- Experience in payments or fintech
+
+Please send your resume to careers@merlionpay.example.

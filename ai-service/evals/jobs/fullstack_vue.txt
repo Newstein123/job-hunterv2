@@ -1,0 +1,21 @@
+Full Stack Developer (Laravel + Vue.js)
+Company: Orchard Commerce (Singapore)
+
+We're an e-commerce platform helping retailers run their online stores.
+
+Responsibilities:
+- Build features across our Laravel back end and Vue.js front end
+- Develop back-office dashboards for order and inventory management
+- Collaborate with product and design
+
+Must have:
+- 3+ years with PHP / Laravel
+- Vue.js and JavaScript
+- MySQL
+- Git
+
+Bonus:
+- TypeScript
+- Tailwind CSS
+
+Please include a short cover letter with your application.

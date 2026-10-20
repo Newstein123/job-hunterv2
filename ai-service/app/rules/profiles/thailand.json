@@ -1,0 +1,6 @@
+{
+  "notes": "Curated Thailand profile. Only the sending timezone is set; add conventions here only once they are validated.",
+  "sending_rules": {
+    "timezone": "Asia/Bangkok"
+  }
+}

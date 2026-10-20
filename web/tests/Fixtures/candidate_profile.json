@@ -1,0 +1,87 @@
+{
+    "name": "Alex Tan",
+    "email": "alex.tan@example.com",
+    "phone": "+65 8000 0000",
+    "linkedin": "https://www.linkedin.com/in/alex-tan-example",
+    "location": "Singapore",
+    "headline": "Backend developer focused on PHP/Laravel APIs",
+    "summary": "Backend developer building REST APIs and payment integrations with PHP and Laravel.",
+    "skills": [
+        { "name": "PHP", "level": "advanced", "years": 7 },
+        { "name": "Laravel", "level": "advanced", "years": 6 },
+        { "name": "MySQL", "level": "advanced", "years": 7 },
+        { "name": "REST API", "level": "advanced" },
+        { "name": "Docker", "level": "intermediate", "years": 3 },
+        { "name": "Redis", "level": "intermediate" },
+        { "name": "Vue.js", "level": "intermediate", "years": 3 },
+        { "name": "JavaScript", "level": "intermediate" },
+        { "name": "AWS", "level": "intermediate", "years": 2 },
+        { "name": "Git" },
+        { "name": "GraphQL", "level": "beginner" }
+    ],
+    "experiences": [
+        {
+            "id": "exp_senior_php",
+            "title": "Senior PHP Developer",
+            "company": "Harbour Payments",
+            "start": "2021-03-01",
+            "end": null,
+            "location": "Singapore",
+            "summary": "Lead developer for the merchant payments API built with Laravel and MySQL.",
+            "achievements": [
+                "Designed REST APIs used by 300+ merchant integrations",
+                "Moved services to Docker-based deployments on AWS",
+                "Introduced Redis caching for high-traffic endpoints"
+            ],
+            "skills": [
+                "PHP",
+                "Laravel",
+                "MySQL",
+                "REST API",
+                "Docker",
+                "Redis",
+                "AWS"
+            ]
+        },
+        {
+            "id": "exp_fullstack",
+            "title": "Full Stack Developer",
+            "company": "Lumen Retail",
+            "start": "2018-01-01",
+            "end": "2021-02-28",
+            "location": "Singapore",
+            "summary": "Built e-commerce back-office features with Laravel and Vue.js.",
+            "achievements": [
+                "Delivered order management dashboard in Vue.js",
+                "Maintained Laravel REST API for the mobile app"
+            ],
+            "skills": ["PHP", "Laravel", "Vue.js", "JavaScript", "MySQL"]
+        }
+    ],
+    "projects": [
+        {
+            "id": "proj_kwinchain",
+            "name": "KwinChain",
+            "description": "Open-source Laravel package for blockchain transaction tracking with a REST API and Docker setup.",
+            "skills": ["PHP", "Laravel", "REST API", "Docker", "Blockchain"],
+            "url": "https://github.com/example/kwinchain"
+        },
+        {
+            "id": "proj_shopdash",
+            "name": "ShopDash",
+            "description": "Vue.js analytics dashboard for small online shops.",
+            "skills": ["Vue.js", "JavaScript"]
+        }
+    ],
+    "education": [
+        {
+            "id": "edu_bsc",
+            "institution": "Example University",
+            "degree": "Bachelor of Science",
+            "field": "Computer Science",
+            "start": "2013-08-01",
+            "end": "2017-06-30"
+        }
+    ],
+    "languages": ["English", "Mandarin"]
+}

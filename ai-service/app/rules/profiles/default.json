@@ -1,0 +1,41 @@
+{
+  "notes": "Baseline rules used when no country or user rules override them. These are product defaults, not market research.",
+  "cv_rules": {
+    "preferred_formats": [
+      "pdf"
+    ],
+    "max_pages": null,
+    "include": [],
+    "avoid": []
+  },
+  "email_rules": {
+    "language": "English",
+    "max_words": 200,
+    "paragraph_count": 3,
+    "tone": "professional",
+    "include_linkedin": true,
+    "include_phone": true,
+    "include_salary": false,
+    "letter_style": "modern"
+  },
+  "application_rules": {
+    "cover_letter": "when_requested",
+    "mention_projects": true,
+    "cta": "I would welcome the opportunity to discuss how I can contribute to the team.",
+    "skills_to_emphasize": [],
+    "claims_to_avoid": [],
+    "max_emphasized_skills": 5
+  },
+  "sending_rules": {
+    "timezone": "UTC",
+    "allowed_days": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "start_time": "09:00",
+    "end_time": "17:00"
+  }
+}

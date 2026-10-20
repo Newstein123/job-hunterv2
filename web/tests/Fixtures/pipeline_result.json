@@ -1,0 +1,555 @@
+{
+  "job_analysis": {
+    "title": "Senior Backend Engineer",
+    "company": "Merlion Pay",
+    "seniority": "senior",
+    "location": "Singapore",
+    "country": "Singapore",
+    "required_skills": [
+      "PHP",
+      "Laravel",
+      "MySQL",
+      "REST API",
+      "Docker"
+    ],
+    "preferred_skills": [
+      "Redis",
+      "AWS",
+      "Kubernetes"
+    ],
+    "responsibilities": [
+      "Design and build REST APIs",
+      "Mentor junior engineers"
+    ],
+    "keywords": [
+      "fintech",
+      "payments"
+    ],
+    "requirements": [
+      "5+ years of backend development experience"
+    ]
+  },
+  "match": {
+    "matching_required": [
+      {
+        "skill": "PHP",
+        "evidence": [
+          "skill_list",
+          "experience:exp_senior_php",
+          "experience:exp_fullstack",
+          "project:proj_kwinchain",
+          "resume:backend_developer",
+          "resume:cloud_engineer",
+          "resume:fullstack_developer"
+        ],
+        "kind": "skill"
+      },
+      {
+        "skill": "Laravel",
+        "evidence": [
+          "skill_list",
+          "experience:exp_senior_php",
+          "experience:exp_fullstack",
+          "project:proj_kwinchain",
+          "resume:backend_developer",
+          "resume:cloud_engineer",
+          "resume:fullstack_developer"
+        ],
+        "kind": "skill"
+      },
+      {
+        "skill": "MySQL",
+        "evidence": [
+          "skill_list",
+          "experience:exp_senior_php",
+          "experience:exp_fullstack",
+          "resume:backend_developer",
+          "resume:fullstack_developer"
+        ],
+        "kind": "skill"
+      },
+      {
+        "skill": "REST API",
+        "evidence": [
+          "skill_list",
+          "experience:exp_senior_php",
+          "experience:exp_fullstack",
+          "project:proj_kwinchain",
+          "resume:backend_developer"
+        ],
+        "kind": "skill"
+      },
+      {
+        "skill": "Docker",
+        "evidence": [
+          "skill_list",
+          "experience:exp_senior_php",
+          "project:proj_kwinchain",
+          "resume:backend_developer",
+          "resume:cloud_engineer"
+        ],
+        "kind": "skill"
+      },
+      {
+        "skill": "5+ years of backend development experience",
+        "evidence": [
+          "profile"
+        ],
+        "kind": "requirement"
+      }
+    ],
+    "matching_preferred": [
+      {
+        "skill": "Redis",
+        "evidence": [
+          "skill_list",
+          "experience:exp_senior_php",
+          "resume:backend_developer",
+          "resume:cloud_engineer"
+        ],
+        "kind": "skill"
+      },
+      {
+        "skill": "AWS",
+        "evidence": [
+          "skill_list",
+          "experience:exp_senior_php",
+          "resume:backend_developer",
+          "resume:cloud_engineer"
+        ],
+        "kind": "skill"
+      }
+    ],
+    "missing_required": [],
+    "missing_preferred": [
+      "Kubernetes"
+    ],
+    "relevant_experience": [
+      {
+        "id": "exp_senior_php",
+        "label": "Senior PHP Developer at Harbour Payments",
+        "matched_skills": [
+          "PHP",
+          "Laravel",
+          "MySQL",
+          "REST API",
+          "Docker",
+          "Redis",
+          "AWS"
+        ],
+        "evidence": [
+          "experience:exp_senior_php"
+        ]
+      },
+      {
+        "id": "exp_fullstack",
+        "label": "Full Stack Developer at Lumen Retail",
+        "matched_skills": [
+          "PHP",
+          "Laravel",
+          "MySQL",
+          "REST API"
+        ],
+        "evidence": [
+          "experience:exp_fullstack"
+        ]
+      }
+    ],
+    "relevant_projects": [
+      {
+        "id": "proj_kwinchain",
+        "label": "KwinChain",
+        "matched_skills": [
+          "PHP",
+          "Laravel",
+          "REST API",
+          "Docker"
+        ],
+        "evidence": [
+          "project:proj_kwinchain"
+        ]
+      }
+    ],
+    "relevant_education": [],
+    "summary": {
+      "required_covered": 6,
+      "required_total": 6,
+      "preferred_covered": 2,
+      "preferred_total": 3
+    },
+    "requirement_checks": [
+      {
+        "requirement": "Kubernetes",
+        "required": false,
+        "status": "not_met",
+        "evidence": [],
+        "note": null,
+        "kind": "skill"
+      },
+      {
+        "requirement": "5+ years of backend development experience",
+        "required": true,
+        "status": "met",
+        "evidence": [
+          {
+            "source": "profile",
+            "quote": "8 years of work experience in total"
+          }
+        ],
+        "note": "Checked against your total work experience; make sure it is in the field the job asks for.",
+        "kind": "requirement"
+      }
+    ]
+  },
+  "resume_selection": {
+    "recommended_resume_id": "backend_developer",
+    "recommended_filename": "backend_developer.pdf",
+    "alternative_resume_ids": [
+      "cloud_engineer",
+      "fullstack_developer"
+    ],
+    "reason": "Covers 5/6 requirements (PHP, Laravel, MySQL, REST API, Docker); 2/3 preferred; mentions payments; next best is cloud_engineer.md with 3 required and 2 preferred.",
+    "emphasize": [
+      "PHP",
+      "Laravel",
+      "MySQL",
+      "REST API",
+      "Docker",
+      "Redis",
+      "AWS"
+    ],
+    "relevant_experience": [
+      "Senior PHP Developer at Harbour Payments",
+      "Full Stack Developer at Lumen Retail"
+    ],
+    "relevant_projects": [
+      "KwinChain"
+    ],
+    "scores": [
+      {
+        "resume_id": "backend_developer",
+        "required_covered": [
+          "PHP",
+          "Laravel",
+          "MySQL",
+          "REST API",
+          "Docker"
+        ],
+        "preferred_covered": [
+          "Redis",
+          "AWS"
+        ],
+        "keyword_hits": [
+          "payments"
+        ],
+        "cv_rule_issues": [],
+        "could_add": [
+          {
+            "skill": "5+ years of backend development experience",
+            "required": true,
+            "evidence": [
+              "your profile"
+            ]
+          }
+        ],
+        "gaps": [
+          "Kubernetes"
+        ],
+        "word_count": 108,
+        "page_count": 1,
+        "ats_match": 80,
+        "ats_found": [
+          "PHP",
+          "Laravel",
+          "MySQL",
+          "REST API",
+          "Docker",
+          "Redis",
+          "AWS",
+          "payments"
+        ],
+        "ats_missing": [
+          "Kubernetes",
+          "fintech"
+        ]
+      },
+      {
+        "resume_id": "cloud_engineer",
+        "required_covered": [
+          "PHP",
+          "Laravel",
+          "Docker"
+        ],
+        "preferred_covered": [
+          "Redis",
+          "AWS"
+        ],
+        "keyword_hits": [
+          "payments"
+        ],
+        "cv_rule_issues": [
+          "format md is not in preferred formats ['pdf']"
+        ],
+        "could_add": [
+          {
+            "skill": "MySQL",
+            "required": true,
+            "evidence": [
+              "your skills list",
+              "experience: Senior PHP Developer at Harbour Payments",
+              "experience: Full Stack Developer at Lumen Retail",
+              "resume: backend_developer.pdf",
+              "resume: fullstack_developer.docx"
+            ]
+          },
+          {
+            "skill": "REST API",
+            "required": true,
+            "evidence": [
+              "your skills list",
+              "experience: Senior PHP Developer at Harbour Payments",
+              "experience: Full Stack Developer at Lumen Retail",
+              "project: KwinChain",
+              "resume: backend_developer.pdf"
+            ]
+          },
+          {
+            "skill": "5+ years of backend development experience",
+            "required": true,
+            "evidence": [
+              "your profile"
+            ]
+          }
+        ],
+        "gaps": [
+          "Kubernetes"
+        ],
+        "word_count": 57,
+        "page_count": null,
+        "ats_match": 60,
+        "ats_found": [
+          "PHP",
+          "Laravel",
+          "Docker",
+          "Redis",
+          "AWS",
+          "payments"
+        ],
+        "ats_missing": [
+          "MySQL",
+          "REST API",
+          "Kubernetes",
+          "fintech"
+        ]
+      },
+      {
+        "resume_id": "fullstack_developer",
+        "required_covered": [
+          "PHP",
+          "Laravel",
+          "MySQL"
+        ],
+        "preferred_covered": [],
+        "keyword_hits": [
+          "payments"
+        ],
+        "cv_rule_issues": [
+          "format docx is not in preferred formats ['pdf']"
+        ],
+        "could_add": [
+          {
+            "skill": "REST API",
+            "required": true,
+            "evidence": [
+              "your skills list",
+              "experience: Senior PHP Developer at Harbour Payments",
+              "experience: Full Stack Developer at Lumen Retail",
+              "project: KwinChain",
+              "resume: backend_developer.pdf"
+            ]
+          },
+          {
+            "skill": "Docker",
+            "required": true,
+            "evidence": [
+              "your skills list",
+              "experience: Senior PHP Developer at Harbour Payments",
+              "project: KwinChain",
+              "resume: backend_developer.pdf",
+              "resume: cloud_engineer.md"
+            ]
+          },
+          {
+            "skill": "Redis",
+            "required": false,
+            "evidence": [
+              "your skills list",
+              "experience: Senior PHP Developer at Harbour Payments",
+              "resume: backend_developer.pdf",
+              "resume: cloud_engineer.md"
+            ]
+          },
+          {
+            "skill": "AWS",
+            "required": false,
+            "evidence": [
+              "your skills list",
+              "experience: Senior PHP Developer at Harbour Payments",
+              "resume: backend_developer.pdf",
+              "resume: cloud_engineer.md"
+            ]
+          },
+          {
+            "skill": "5+ years of backend development experience",
+            "required": true,
+            "evidence": [
+              "your profile"
+            ]
+          }
+        ],
+        "gaps": [
+          "Kubernetes"
+        ],
+        "word_count": 85,
+        "page_count": null,
+        "ats_match": 40,
+        "ats_found": [
+          "PHP",
+          "Laravel",
+          "MySQL",
+          "payments"
+        ],
+        "ats_missing": [
+          "REST API",
+          "Docker",
+          "Redis",
+          "AWS",
+          "Kubernetes",
+          "fintech"
+        ]
+      }
+    ]
+  },
+  "skill_strategy": {
+    "emphasize": [
+      "PHP",
+      "Laravel",
+      "MySQL",
+      "REST API",
+      "Docker"
+    ],
+    "supporting_skills": [
+      "Redis",
+      "AWS"
+    ],
+    "avoid_overemphasizing": [
+      "5+ years of backend development experience"
+    ],
+    "do_not_claim": [
+      "Kubernetes"
+    ],
+    "relevant_experience": [
+      "exp_senior_php",
+      "exp_fullstack"
+    ],
+    "relevant_project": "proj_kwinchain"
+  },
+  "application_strategy": {
+    "language": "English",
+    "tone": "professional",
+    "email_length": "short",
+    "paragraph_count": 3,
+    "max_words": 180,
+    "focus": [
+      "PHP",
+      "Laravel",
+      "MySQL",
+      "REST API",
+      "Docker",
+      "Redis",
+      "AWS"
+    ],
+    "relevant_experience": [
+      "exp_senior_php",
+      "exp_fullstack"
+    ],
+    "relevant_project": "proj_kwinchain",
+    "cta": "I would welcome the opportunity to discuss how I can contribute to the team.",
+    "include_cover_letter": false,
+    "cover_letter_reason": "The job posting does not ask for a cover letter",
+    "include_linkedin": true,
+    "include_phone": true,
+    "include_salary": false,
+    "claims_to_avoid": [
+      "expert in everything",
+      "rockstar"
+    ],
+    "earliest_allowed_send_time": "2026-09-30T10:00:00+08:00",
+    "send_timezone": "Asia/Singapore",
+    "sending_rules": {
+      "timezone": "Asia/Singapore",
+      "allowed_days": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "start_time": "09:00",
+      "end_time": "17:00"
+    },
+    "letter_style": "modern",
+    "job_source": null
+  },
+  "email": {
+    "subject": "Resume attached for Senior Backend Engineer position - Alex Tan",
+    "body": "Dear Merlion Pay Hiring Team,\n\nI am applying for the Senior Backend Engineer role at Merlion Pay. As a Senior PHP Developer at Harbour Payments, I lead the merchant payments API built with Laravel and MySQL.\n\nI have designed REST APIs used by 300+ merchant integrations and moved services to Docker-based deployments. My open-source KwinChain package also uses Laravel and Docker.\n\nMy resume is attached. I would welcome the opportunity to discuss how I can contribute to the team.\n\nKind regards,\nAlex Tan\nalex.tan@example.com\n+65 8000 0000\nhttps://www.linkedin.com/in/alex-tan-example",
+    "cover_letter": null,
+    "attachment": "backend_developer.pdf",
+    "validation": {
+      "errors": [],
+      "warnings": [],
+      "attempts": 1
+    }
+  },
+  "meta": {
+    "model": "fake",
+    "prompt_versions": {
+      "job_analysis": "job_analysis.v2",
+      "evidence": "evidence.v1",
+      "email_generation": "email_generation.v4"
+    },
+    "rules_sources": [
+      "/Users/astro/Desktop/NexusCode/job-hunter/ai-service/app/rules/profiles/default.json",
+      "/Users/astro/Desktop/NexusCode/job-hunter/ai-service/app/rules/profiles/singapore.json",
+      "/Users/astro/Desktop/NexusCode/job-hunter/ai-service/examples/rules/user_rules.json"
+    ],
+    "generated_at": "2026-09-30T02:00:00Z",
+    "warnings": [
+      "Dropped required skill 'Symfony': not found in the job description"
+    ],
+    "usage": [
+      {
+        "task": "job_analysis",
+        "model": "fake",
+        "input_tokens": 236,
+        "output_tokens": 115,
+        "thinking_tokens": 0
+      },
+      {
+        "task": "evidence",
+        "model": "fake",
+        "input_tokens": 845,
+        "output_tokens": 0,
+        "thinking_tokens": 0
+      },
+      {
+        "task": "email",
+        "model": "fake",
+        "input_tokens": 653,
+        "output_tokens": 144,
+        "thinking_tokens": 0
+      }
+    ]
+  }
+}

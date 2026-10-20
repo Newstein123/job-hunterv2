@@ -1,0 +1,70 @@
+{
+  "name": "Hnin Wai",
+  "email": "hnin.wai@example.org",
+  "phone": "+95 9 400 000 003",
+  "headline": "Accountant",
+  "summary": "Accountant with 7 years of experience in full set of accounts and financial reporting.",
+  "skills": [
+    {
+      "name": "MYOB"
+    },
+    {
+      "name": "Xero"
+    },
+    {
+      "name": "QuickBooks"
+    },
+    {
+      "name": "Microsoft Excel"
+    }
+  ],
+  "experiences": [
+    {
+      "id": "exp1",
+      "title": "Senior Accountant",
+      "company": "Lotus Trading Co., Ltd",
+      "start": "2021-01-01",
+      "end": null,
+      "summary": "Full set of accounts for a trading group.",
+      "achievements": [
+        "Handled full set of accounts, bank reconciliation and month-end closing",
+        "Prepared monthly financial reports and GST returns",
+        "Managed accounts payable and receivable",
+        "Prepared audit schedules for external auditors"
+      ],
+      "skills": [
+        "MYOB",
+        "Xero",
+        "Microsoft Excel"
+      ]
+    },
+    {
+      "id": "exp2",
+      "title": "Accountant",
+      "company": "Bagan Logistics",
+      "start": "2018-02-01",
+      "end": "2020-12-31",
+      "summary": "Day-to-day accounting.",
+      "achievements": [
+        "Processed payroll for 120 staff",
+        "Recorded journal entries"
+      ],
+      "skills": [
+        "QuickBooks"
+      ]
+    }
+  ],
+  "projects": [],
+  "education": [
+    {
+      "id": "e1",
+      "institution": "Yangon University of Economics",
+      "degree": "Bachelor of Commerce",
+      "field": "Accounting"
+    }
+  ],
+  "languages": [
+    "English",
+    "Myanmar"
+  ]
+}

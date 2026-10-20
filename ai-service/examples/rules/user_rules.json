@@ -1,0 +1,10 @@
+{
+  "email_rules": {
+    "max_words": 180,
+    "paragraph_count": 3
+  },
+  "application_rules": {
+    "skills_to_emphasize": ["Laravel"],
+    "claims_to_avoid": ["expert in everything", "rockstar"]
+  }
+}

@@ -1,0 +1,38 @@
+Senior Electrical Engineer
+Company: CENTROID ENGINEERING SOLUTIONS PTE. LTD.
+Country: Singapore
+Source: https://www.mycareersfuture.gov.sg/job/b9d6814535a5c89af07b3b872f15d069
+
+We are seeking an experienced Senior Electrical Engineer to support semiconductor and advanced manufacturing projects, with a strong focus on tool installation, electrical hook-up and site coordination.
+The successful candidate will be responsible for developing and coordinating electrical designs, reviewing tool electrical requirements, coordinating power and cabling interfaces, and working closely with customers, equipment vendors, contractors and electrical subcontractors to ensure tools are installed and connected safely, correctly and according to project requirements and schedule.
+The role requires practical, site-oriented individual who can interpret electrical drawings, coordinate multiple contractors and resolve installation issues while maintaining close communication with the customer.
+Electrical Design & Engineering
+
+- Prepare, review and update electrical drawings and documentation for semiconductor tool installation and hook-up projects.
+- Review equipment and tool electrical requirements, including power supply, voltage, current, isolation, grounding/earthing and connection requirements.
+- Develop and coordinate electrical layouts, single-line diagrams, power distribution drawings, cable schedules, termination details and other construction drawings.
+- Determine and coordinate electrical power tapping points and ensure adequate power availability for new and existing tools.
+- Coordinate cable routing, cable tray/containment requirements, cable sizing, cable pulling and termination requirements.
+- Review customer and tool vendor drawings and identify electrical interfaces and installation requirements prior to site execution.
+- Ensure electrical designs and installation details comply with project specifications, applicable codes, standards and customer requirements.
+Tool Installation & Hook-Up Coordination
+- Coordinate with customers, tool owners, equipment vendors and contractors on tool installation and electrical hook-up requirements.
+- Attend tool installation planning and coordination meetings with customers and relevant contractors.
+- Coordinate electrical hook-up activities from the designated power source to the tool, including power tapping, isolation, cable routing, cable installation, termination, grounding and testing.
+- Coordinate electrical interfaces between the tool, facility infrastructure and other contractors to ensure that installation requirements are clearly defined before work commences.
+- Review site conditions and coordinate with contractors to ensure that electrical works are properly sequenced with tool delivery, positioning, mechanical installation and other services.
+- Coordinate with other disciplines such as mechanical, process, HVAC, specialty gas, chemical and controls teams where their works interface with tool installation.
+Customer& Contractor Coordination
+- Act as the key electrical coordination point between the customer, tool vendors, main contractors and electrical subcontractors.
+- Conduct regular coordination meetings with electrical subcontractors and other relevant contractors to review work progress, upcoming activities, site constraints and outstanding issues.
+- Coordinate work schedules and ensure electrical hook-up activities are completed in line with the overall tool installation and project schedule.
+- Monitor subcontractor progress and follow up on outstanding works, technical issues and corrective actions.
+- Resolve site coordination issues and escalate technical matters to the Project Manager or Engineering team when required.
+- Liaise with customers to obtain approvals, clarify requirements and coordinate access, work permits, shutdowns and installation schedules.
+Site Supervision, Testing & Handover
+- Conduct site inspections to verify that electrical installation works are carried out in accordance with approved drawings and project requirements.
+- Check electrical installation quality, workmanship, cable routing, labelling, termination, grounding and equipment connections.
+- Coordinate electrical testing and commissioning activities, including insulation resistance, continuity, grounding and other applicable tests.
+- Identify and coordinate rectification of installation defects and punch-list items.
+- Maintain accurate records of installation progress, inspection results, testing documentation and as-built information.
+- Support final inspection, customer acceptance and project handover

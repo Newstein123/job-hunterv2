@@ -1,0 +1,20 @@
+[
+  {
+    "id": "backend_laravel",
+    "job_file": "jobs/backend_laravel.txt",
+    "meta": {"position": "Senior Backend Engineer", "company": "Merlion Pay", "source": "LinkedIn"},
+    "country": "Singapore",
+    "expected_resume_id": "backend_developer",
+    "expected_required_skills": ["PHP", "Laravel", "MySQL", "REST API", "Docker"],
+    "expect_cover_letter": false
+  },
+  {
+    "id": "fullstack_vue",
+    "job_file": "jobs/fullstack_vue.txt",
+    "meta": {"company": "Orchard Commerce"},
+    "country": "Singapore",
+    "expected_resume_id": "fullstack_developer",
+    "expected_required_skills": ["PHP", "Laravel", "Vue.js", "JavaScript", "MySQL", "Git"],
+    "expect_cover_letter": true
+  }
+]

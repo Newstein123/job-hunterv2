@@ -1,0 +1,6 @@
+{
+  "notes": "Curated Australia profile. Timezone defaults to Sydney; users outside AEST/AEDT can override it on the Rules page. Add conventions here only once they are validated.",
+  "sending_rules": {
+    "timezone": "Australia/Sydney"
+  }
+}

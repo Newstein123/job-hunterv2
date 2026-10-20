@@ -1,0 +1,76 @@
+{
+  "name": "Aye Thandar",
+  "email": "aye.thandar@example.org",
+  "phone": "+95 9 400 000 001",
+  "whatsapp": "+95 9 400 000 001",
+  "headline": "Quantity Surveyor (Civil)",
+  "summary": "After graduating with a Bachelor of Engineering (Civil), I have worked as a Quantity Surveyor for 6 years on residential and infrastructure projects.",
+  "skills": [
+    {
+      "name": "AutoCAD"
+    },
+    {
+      "name": "Microsoft Excel"
+    },
+    {
+      "name": "CostX"
+    },
+    {
+      "name": "Bill of Quantities"
+    }
+  ],
+  "experiences": [
+    {
+      "id": "exp1",
+      "title": "Quantity Surveyor",
+      "company": "Golden Myint Construction Co., Ltd",
+      "start": "2021-03-01",
+      "end": null,
+      "summary": "Quantity surveying for residential towers and a hydropower project.",
+      "achievements": [
+        "Perform measurement, take off quantities and prepare Bills of Quantities",
+        "Estimate project cost and plan budget for new projects",
+        "Evaluate quotations and negotiate with sub-contractors for tender award",
+        "Prepare progress claims and variation orders and monitor project cost"
+      ],
+      "skills": [
+        "AutoCAD",
+        "Microsoft Excel"
+      ]
+    },
+    {
+      "id": "exp2",
+      "title": "Assistant Quantity Surveyor",
+      "company": "Shwe Pyi Engineering",
+      "start": "2018-06-01",
+      "end": "2021-02-28",
+      "summary": "Supported tender preparation and site measurement.",
+      "achievements": [
+        "Checked tender documents for completeness",
+        "Carried out site measurement to evaluate progress"
+      ],
+      "skills": [
+        "AutoCAD"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "p1",
+      "name": "Riverside Residences",
+      "description": "18-storey residential tower: BQ, tender and progress claims"
+    }
+  ],
+  "education": [
+    {
+      "id": "e1",
+      "institution": "Technological University (Thanlyin)",
+      "degree": "Bachelor of Engineering",
+      "field": "Civil"
+    }
+  ],
+  "languages": [
+    "English",
+    "Myanmar"
+  ]
+}

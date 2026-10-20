@@ -1,0 +1,6 @@
+{
+  "notes": "Curated Hong Kong profile. Only the sending timezone is set; add conventions here only once they are validated.",
+  "sending_rules": {
+    "timezone": "Asia/Hong_Kong"
+  }
+}
