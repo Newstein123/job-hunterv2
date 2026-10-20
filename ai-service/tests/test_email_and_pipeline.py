@@ -62,7 +62,6 @@ def test_pipeline_end_to_end_with_repair(profile, resumes, backend_job_input, ba
     assert result.resume_selection.recommended_resume_id == "backend_developer"
     assert result.skill_strategy.do_not_claim == ["Kubernetes"]
     assert result.application_strategy.include_cover_letter is False
-    assert result.application_strategy.send_timezone == "Asia/Singapore"
     email = result.email
     assert email.validation.ok and email.validation.attempts == 2
     assert "Kubernetes" in llm.calls[2]["prompt"]  # repair prompt lists the violation

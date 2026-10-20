@@ -36,7 +36,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $provider_message_id
  * @property string|null $thread_id
  * @property CarbonImmutable|null $scheduled_at
- * @property bool $respect_window
  * @property CarbonImmutable|null $sent_at
  * @property CarbonImmutable|null $received_at
  * @property int $attempts
@@ -48,7 +47,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[Fillable([
     'user_id', 'application_id', 'in_reply_to_id', 'email_account_id', 'direction', 'status', 'to_email', 'cc', 'bcc', 'from_email', 'subject',
     'body_text', 'snippet', 'rfc_message_id', 'is_auto_reply', 'analysis', 'analysis_state', 'analysis_error', 'attach_resume', 'validation',
-    'provider_message_id', 'thread_id', 'scheduled_at', 'respect_window', 'sent_at', 'received_at', 'attempts', 'last_error',
+    'provider_message_id', 'thread_id', 'scheduled_at', 'sent_at', 'received_at', 'attempts', 'last_error',
 ])]
 class EmailMessage extends Model
 {
@@ -93,7 +92,6 @@ class EmailMessage extends Model
     {
         return [
             'scheduled_at' => 'datetime',
-            'respect_window' => 'boolean',
             'is_auto_reply' => 'boolean',
             'attach_resume' => 'boolean',
             'analysis' => 'array',

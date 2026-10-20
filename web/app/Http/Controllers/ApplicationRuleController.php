@@ -24,21 +24,14 @@ class ApplicationRuleController extends Controller
             'cover_letter' => 'when_requested', 'mention_projects' => true, 'max_emphasized_skills' => 5,
             'cta' => 'I would welcome the opportunity to discuss how I can contribute to the team.',
         ],
-        'sending_rules' => [
-            'timezone' => 'UTC (or the job country\'s timezone)', 'start_time' => '09:00', 'end_time' => '17:00',
-            'allowed_days' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        ],
         'cv_rules' => ['preferred_formats' => ['pdf'], 'max_pages' => null],
     ];
-
-    private const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
     public function edit(Request $request): Response
     {
         return Inertia::render('rules/edit', [
             'rules' => $request->user()->applicationRule->rules ?? (object) [],
             'defaults' => self::DEFAULTS,
-            'weekdays' => self::WEEKDAYS,
         ]);
     }
 
@@ -61,11 +54,6 @@ class ApplicationRuleController extends Controller
             'application_rules.skills_to_emphasize' => ['nullable', 'string', 'max:500'],
             'application_rules.claims_to_avoid' => ['nullable', 'string', 'max:2000'],
             'application_rules.max_emphasized_skills' => ['nullable', 'integer', 'min:1', 'max:10'],
-            'sending_rules.timezone' => ['nullable', 'timezone:all'],
-            'sending_rules.allowed_days' => ['nullable', 'array'],
-            'sending_rules.allowed_days.*' => [Rule::in(self::WEEKDAYS)],
-            'sending_rules.start_time' => ['nullable', 'date_format:H:i', 'required_with:sending_rules.end_time'],
-            'sending_rules.end_time' => ['nullable', 'date_format:H:i', 'after:sending_rules.start_time'],
             'cv_rules.preferred_formats' => ['nullable', 'array'],
             'cv_rules.preferred_formats.*' => [Rule::in(['pdf', 'docx'])],
             'cv_rules.max_pages' => ['nullable', 'integer', 'min:1', 'max:10'],
@@ -79,7 +67,7 @@ class ApplicationRuleController extends Controller
                     'max_words', 'paragraph_count', 'max_emphasized_skills', 'max_pages' => $value === null ? null : (int) $value,
                     'skills_to_emphasize' => $this->csv($value) ?: null,
                     'claims_to_avoid' => $this->lines($value) ?: null,
-                    'allowed_days', 'preferred_formats' => $value ?: null,
+                    'preferred_formats' => $value ?: null,
                     default => $value,
                 };
                 if ($value !== null && $value !== '') {

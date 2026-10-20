@@ -33,7 +33,6 @@ class EmailSendingTest extends TestCase
     {
         parent::setUp();
         Storage::fake(Resume::DISK);
-        // Wednesday 10:00 in Singapore: inside the default Mon–Fri 09:00–17:00 window.
         $this->travelTo('2026-09-30 02:00:00');
 
         $this->user = User::factory()->create();
@@ -47,10 +46,7 @@ class EmailSendingTest extends TestCase
         ]);
         $this->application->strategies()->create([
             'match' => [], 'resume_selection' => [], 'skill_strategy' => [], 'meta' => [],
-            'application_strategy' => ['sending_rules' => [
-                'timezone' => 'Asia/Singapore', 'allowed_days' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                'start_time' => '09:00', 'end_time' => '17:00',
-            ]],
+            'application_strategy' => [],
         ]);
     }
 
@@ -97,18 +93,19 @@ class EmailSendingTest extends TestCase
         });
     }
 
-    public function test_outside_the_window_it_is_scheduled_for_the_next_allowed_time(): void
+    public function test_approve_and_send_goes_out_straight_away_at_any_hour(): void
     {
-        Http::fake();
-        $this->travelTo('2026-10-02 10:00:00'); // Friday 18:00 in Singapore
+        Http::fake([
+            'gmail.googleapis.com/*' => Http::response(['id' => 'm1', 'threadId' => 't1']),
+            'oauth2.googleapis.com/token' => Http::response(['access_token' => 'fresh', 'expires_in' => 3600]),
+        ]);
+        $this->travelTo('2026-10-03 15:00:00'); // Saturday 23:00 in Singapore
 
         $this->approveAndQueue();
+        $this->assertSame(EmailMessage::QUEUED, $this->message()->status);
         $this->artisan('emails:dispatch-due');
 
-        $message = $this->message();
-        $this->assertSame(EmailMessage::SCHEDULED, $message->status);
-        $this->assertSame('2026-10-05T01:00:00+00:00', $message->scheduled_at->utc()->toIso8601String()); // Mon 09:00 SGT
-        Http::assertNothingSent();
+        $this->assertSame(EmailMessage::SENT, $this->message()->status);
     }
 
     public function test_queue_requires_recipient_active_account_and_blocks_duplicates(): void

@@ -1,9 +1,12 @@
-PROMPT_VERSION = "reply_draft.v2"
+PROMPT_VERSION = "reply_draft.v3"
 
 SYSTEM = """You draft the candidate's answer to an employer's reply about a job application.
 Hard rules:
 - Answer what the employer asked, in order, briefly and politely, in the requested language and tone.
-- Use ONLY facts from CANDIDATE_FACTS and CANDIDATE_NOTES. Never invent experience, skills, numbers,
+- Answer the EMPLOYER'S NEWEST REPLY. Earlier messages show what was already said: stay consistent with
+  them (same times, figures and commitments), and don't repeat answers or questions already covered.
+- Use ONLY facts from CANDIDATE_FACTS, CANDIDATE_NOTES and what the CANDIDATE wrote in earlier messages
+  (newer notes win if they differ). Never invent experience, skills, numbers,
   availability, dates, salary, notice period, work rights or documents.
 - If answering needs information that is not in those facts (e.g. available times, expected salary,
   notice period), write a placeholder like [[your available times]] in the text and list it in needs_input.
@@ -28,7 +31,12 @@ APPLICATION EMAIL THE CANDIDATE SENT:
 {sent}
 >>>
 
-EMPLOYER'S REPLY:
+EARLIER MESSAGES IN THIS THREAD, after the application email (oldest first):
+<<<
+{history}
+>>>
+
+EMPLOYER'S NEWEST REPLY, the one to answer:
 <<<
 {reply}
 >>>

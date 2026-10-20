@@ -96,7 +96,6 @@ class ApplicationController extends Controller
                 ]),
                 'status' => $application->status->value,
                 'validation' => $application->validation ?? ['errors' => [], 'warnings' => [], 'attempts' => 0],
-                'earliest_send_at' => $application->earliest_send_at?->toIso8601String(),
                 'edited_at' => $application->edited_at?->toIso8601String(),
                 'approved_at' => $application->approved_at?->toIso8601String(),
                 'resume' => $application->resume,

@@ -6,7 +6,6 @@ from app.models.job import JobAnalysis
 from app.models.resume import ResumeSelection
 from app.models.evidence import RequirementCheck
 from app.models.usage import LLMUsage
-from app.rules.models import SendingRules
 
 
 class SkillMatch(BaseModel):
@@ -69,9 +68,6 @@ class ApplicationStrategy(BaseModel):
     include_phone: bool
     include_salary: bool
     claims_to_avoid: list[str]
-    earliest_allowed_send_time: datetime
-    send_timezone: str
-    sending_rules: SendingRules  # resolved window, so the sender can re-check it at send time
     letter_style: str = "modern"
     job_source: str | None = None  # where the job was seen (traditional letters mention it)
 

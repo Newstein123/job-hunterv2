@@ -326,22 +326,6 @@ export default function ShowApplication({
                                     <Row label="Attachment">
                                         {app.resume?.original_filename ?? '—'}
                                     </Row>
-                                    <Row label="Earliest send time">
-                                        {formatDate(
-                                            app.earliest_send_at,
-                                            true,
-                                            s.application_strategy
-                                                .send_timezone,
-                                        )}{' '}
-                                        <span className="text-muted-foreground">
-                                            (allowed window,{' '}
-                                            {
-                                                s.application_strategy
-                                                    .send_timezone
-                                            }
-                                            )
-                                        </span>
-                                    </Row>
                                     <Row label="Sending account">
                                         {sendingAccount ?? (
                                             <span className="text-muted-foreground">

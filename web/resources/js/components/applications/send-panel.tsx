@@ -11,6 +11,7 @@ import {
 import ApplicationController from '@/actions/App/Http/Controllers/ApplicationController';
 import EmailAccountController from '@/actions/App/Http/Controllers/EmailAccountController';
 import InputError from '@/components/input-error';
+import SendTimeTips from '@/components/send-time-tips';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
@@ -93,7 +94,6 @@ export default function SendPanel({
     needsAck: boolean;
 }) {
     const out = app.outbound;
-    const tz = app.strategy?.application_strategy.send_timezone;
     const hasRecipient = Boolean(app.job.contact_email);
     const hasActive = accounts.some((a) => a.status === 'active');
     const canSend = hasRecipient && hasActive;
@@ -129,8 +129,7 @@ export default function SendPanel({
                     <CardTitle>Approve</CardTitle>
                     <CardDescription>
                         Approving locks this draft.{' '}
-                        <strong>Approve &amp; send</strong> queues it for the
-                        earliest time your sending window allows
+                        <strong>Approve &amp; send</strong> sends it now
                         {app.job.contact_email
                             ? ` (to ${app.job.contact_email})`
                             : ''}
@@ -140,6 +139,7 @@ export default function SendPanel({
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-3">
+                    <SendTimeTips />
                     <Form
                         {...ApplicationController.approve.form(app.id)}
                         options={{ preserveScroll: true }}
@@ -261,7 +261,7 @@ export default function SendPanel({
                     {out.status === 'sent'
                         ? ` · ${formatDate(out.sent_at, true)}`
                         : out.scheduled_at
-                          ? ` · not before ${formatDate(out.scheduled_at, true, tz)}${tz ? ` (${tz})` : ''}`
+                          ? ` · not before ${formatDate(out.scheduled_at, true)}`
                           : ''}
                 </CardDescription>
             </CardHeader>

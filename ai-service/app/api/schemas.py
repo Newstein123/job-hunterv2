@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from app.models.candidate import CandidateProfile
 from app.models.job import JobAnalysis, JobInput
+from app.models.reply import ThreadMessage
 
 
 class ResumeFile(BaseModel):
@@ -36,6 +37,7 @@ class ReplyAnalyzeRequest(BaseModel):
     job: JobAnalysis
     sent_body: str
     reply_text: str
+    history: list[ThreadMessage] = []  # earlier messages after the application email, oldest first
 
 
 class ReplyDraftRequest(BaseModel):
@@ -48,6 +50,7 @@ class ReplyDraftRequest(BaseModel):
     notes: str = ""
     country: str | None = None
     user_rules: dict[str, Any] | None = None
+    history: list[ThreadMessage] = []
 
 
 class ResumeReviewRequest(BaseModel):

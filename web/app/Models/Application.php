@@ -30,7 +30,6 @@ use InvalidArgumentException;
  * @property list<string>|null $cc
  * @property list<string>|null $bcc
  * @property array{errors?: list<string>, warnings?: list<string>, attempts?: int}|null $validation
- * @property CarbonImmutable|null $earliest_send_at
  * @property CarbonImmutable|null $edited_at
  * @property CarbonImmutable|null $approved_at
  * @property CarbonImmutable $updated_at
@@ -44,7 +43,7 @@ use InvalidArgumentException;
  */
 #[Fillable([
     'resume_id', 'email_account_id', 'status', 'generation_state', 'generation_error', 'subject', 'body', 'cover_letter', 'cc', 'bcc',
-    'validation', 'earliest_send_at', 'edited_at', 'approved_at',
+    'validation', 'edited_at', 'approved_at',
 ])]
 class Application extends Model
 {
@@ -67,7 +66,6 @@ class Application extends Model
             'validation' => 'array',
             'cc' => 'array',
             'bcc' => 'array',
-            'earliest_send_at' => 'datetime',
             'edited_at' => 'datetime',
             'approved_at' => 'datetime',
         ];

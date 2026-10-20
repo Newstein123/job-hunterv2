@@ -106,7 +106,7 @@ def generate(request: GenerateApplicationRequest, llm: LLMClient = Depends(get_l
 @app.post("/v1/replies/analyze", response_model=ReplyAnalysis, dependencies=[Depends(require_token)])
 def analyze_reply_endpoint(request: ReplyAnalyzeRequest, llm: LLMClient = Depends(get_llm)) -> ReplyAnalysis:
     """Classify an employer's reply and pull out what they ask for (with quotes as evidence)."""
-    result = analyze_reply(request.job, request.sent_body, request.reply_text, llm)
+    result = analyze_reply(request.job, request.sent_body, request.reply_text, llm, request.history)
     return result.model_copy(update={"usage": llm.usage})
 
 
@@ -116,7 +116,7 @@ def draft_reply_endpoint(request: ReplyDraftRequest, llm: LLMClient = Depends(ge
     rules, _, _ = load_rules(request.country, user_rules=request.user_rules)
     draft = draft_reply(
         request.job, request.profile, request.sent_subject, request.sent_body, request.reply_text,
-        ReplyAnalysis.model_validate(request.analysis), request.notes, rules, llm,
+        ReplyAnalysis.model_validate(request.analysis), request.notes, rules, llm, history=request.history,
     )
     return draft.model_copy(update={"usage": llm.usage})
 

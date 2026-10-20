@@ -17,8 +17,6 @@ use Inertia\Response;
 class JobPostingController extends Controller
 {
     /** Max jobs queued by one "Analyze all" click. */
-    private const ANALYZE_BATCH = 100;
-
     public function index(Request $request): Response
     {
         $user = $request->user();
@@ -92,27 +90,6 @@ class JobPostingController extends Controller
             AnalyzeJobPosting::start($job);
         }
         $this->toast('Analyzing this job…', 'info');
-
-        return back();
-    }
-
-    /** Queue analysis for every job that has none, failed, or is out of date with the profile. */
-    public function analyzeAll(Request $request): RedirectResponse
-    {
-        $this->assertCanAnalyze($request);
-        $user = $request->user();
-        $version = $user->profileVersion();
-
-        $jobs = $user->jobPostings()->where('kind', JobPosting::KIND_POSTING) // speculative ones have no posting to analyze
-            ->where(fn ($q) => $q->whereNull('analysis_state')->orWhereNotIn('analysis_state', [JobPosting::ANALYSIS_PENDING, JobPosting::ANALYSIS_RUNNING]))
-            ->where(fn ($q) => $q->doesntHave('match')
-                ->orWhere('analysis_state', JobPosting::ANALYSIS_FAILED)
-                ->orWhereHas('match', fn ($m) => $m->whereNull('resume_scores'))
-                ->when($version, fn ($q) => $q->orWhereHas('match', fn ($m) => $m->where('profile_snapshot_at', '<', $version)->orWhereNull('profile_snapshot_at'))))
-            ->limit(self::ANALYZE_BATCH)->get();
-
-        AnalyzeJobPosting::start(...$jobs->all());
-        $this->toast($jobs->isEmpty() ? 'Every job is already analyzed.' : "Analyzing {$jobs->count()} job(s)…", 'info');
 
         return back();
     }

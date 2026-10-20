@@ -1,6 +1,3 @@
 {
-  "notes": "Curated Malaysia profile. Only the sending timezone is set; add conventions here only once they are validated.",
-  "sending_rules": {
-    "timezone": "Asia/Kuala_Lumpur"
-  }
+  "notes": "Curated Malaysia profile. No conventions are set yet; add conventions here only once they are validated."
 }

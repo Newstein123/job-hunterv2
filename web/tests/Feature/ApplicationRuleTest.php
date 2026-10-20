@@ -19,16 +19,13 @@ class ApplicationRuleTest extends TestCase
             'application_rules' => [
                 'skills_to_emphasize' => 'Laravel, PHP', 'claims_to_avoid' => "rockstar\n\nninja", 'cover_letter' => 'always',
             ],
-            'sending_rules' => ['timezone' => 'Asia/Singapore', 'allowed_days' => ['Monday', 'Tuesday'],
-                'start_time' => '09:00', 'end_time' => '12:00'],
+            'sending_rules' => ['timezone' => 'Asia/Singapore'], // removed section: ignored
         ])->assertSessionHasNoErrors();
 
         $this->assertEquals([
             'email_rules' => ['max_words' => 180, 'include_salary' => false],
             'application_rules' => ['cover_letter' => 'always', 'skills_to_emphasize' => ['Laravel', 'PHP'],
                 'claims_to_avoid' => ['rockstar', 'ninja']],
-            'sending_rules' => ['timezone' => 'Asia/Singapore', 'allowed_days' => ['Monday', 'Tuesday'],
-                'start_time' => '09:00', 'end_time' => '12:00'],
         ], $user->applicationRule->rules);
     }
 
@@ -38,9 +35,9 @@ class ApplicationRuleTest extends TestCase
 
         $this->actingAs($user)->put(route('rules.update'), [
             'email_rules' => ['max_words' => 5],
-            'sending_rules' => ['timezone' => 'Mars/Base', 'start_time' => '17:00', 'end_time' => '09:00', 'allowed_days' => ['Funday']],
+            'cv_rules' => ['preferred_formats' => ['odt'], 'max_pages' => 0],
         ])->assertSessionHasErrors([
-            'email_rules.max_words', 'sending_rules.timezone', 'sending_rules.end_time', 'sending_rules.allowed_days.0',
+            'email_rules.max_words', 'cv_rules.preferred_formats.0', 'cv_rules.max_pages',
         ]);
     }
 }

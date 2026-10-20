@@ -458,7 +458,7 @@ function AnswerDraft({
                         />
                         <p className="basis-full text-xs text-muted-foreground">
                             Save your edits first. The reply goes into the same
-                            Gmail thread inside your sending window.
+                            Gmail thread right away.
                         </p>
                     </>
                 )}

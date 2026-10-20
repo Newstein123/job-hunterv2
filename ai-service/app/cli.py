@@ -58,7 +58,6 @@ def print_review(result: PipelineResult) -> None:
     print(f"Skills emphasized:  {', '.join(result.skill_strategy.emphasize) or '-'}")
     print(f"Missing (not claimed): {', '.join(result.skill_strategy.do_not_claim) or '-'}")
     print(f"Attachment:         {email.attachment}")
-    print(f"Earliest send time: {strat.earliest_allowed_send_time.isoformat()} ({strat.send_timezone})")
     print(f"Sending account:    (not connected in prototype)")
     print("-" * 72)
     print(f"Subject: {email.subject}\n")

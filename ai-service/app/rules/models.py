@@ -2,10 +2,7 @@
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, field_validator
-
-Weekday = Literal["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-
+from pydantic import BaseModel, ConfigDict
 
 class _Strict(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -53,36 +50,9 @@ class ApplicationRules(_Strict):
     max_emphasized_skills: int = 5
 
 
-class SendingRules(_Strict):
-    timezone: str = "UTC"
-    allowed_days: list[Weekday] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-    start_time: str = "09:00"
-    end_time: str = "17:00"
-
-    @field_validator("start_time", "end_time")
-    @classmethod
-    def _hhmm(cls, v: str) -> str:
-        hours, _, minutes = v.partition(":")
-        if not (hours.isdigit() and minutes.isdigit() and 0 <= int(hours) < 24 and 0 <= int(minutes) < 60):
-            raise ValueError(f"time must be HH:MM, got {v!r}")
-        return v
-
-    @field_validator("timezone")
-    @classmethod
-    def _tz(cls, v: str) -> str:
-        from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-
-        try:
-            ZoneInfo(v)
-        except (ZoneInfoNotFoundError, ValueError) as exc:
-            raise ValueError(f"unknown timezone {v!r}") from exc
-        return v
-
-
 class Rules(_Strict):
     country: str | None = None
     notes: str | None = None
     cv_rules: CVRules = CVRules()
     email_rules: EmailRules = EmailRules()
     application_rules: ApplicationRules = ApplicationRules()
-    sending_rules: SendingRules = SendingRules()

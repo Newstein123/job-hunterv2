@@ -306,4 +306,45 @@ class ConversationTest extends TestCase
         $this->assertSame('<old@acme-careers.com>', $old->rfc_message_id);
         $this->assertSame('done', $old->analysis_state);
     }
+
+    public function test_reply_ai_gets_the_earlier_thread_oldest_first(): void
+    {
+        $first = $this->storedReply();
+        $base = ['user_id' => $this->user->id, 'email_account_id' => $this->account->id, 'thread_id' => 'thr-1'];
+        $this->travel(1)->hours();
+        $this->application->emailMessages()->create([...$base, 'direction' => EmailMessage::OUTBOUND, 'status' => EmailMessage::SENT,
+            'in_reply_to_id' => $first->id, 'to_email' => 'jane@acme-careers.com', 'body_text' => 'I am available Tue 2-5pm SGT.', 'sent_at' => now()]);
+        $this->application->emailMessages()->create([...$base, 'direction' => EmailMessage::OUTBOUND, 'status' => EmailMessage::DRAFT,
+            'in_reply_to_id' => $first->id, 'to_email' => 'jane@acme-careers.com', 'body_text' => 'unsent draft']);
+        $this->travel(1)->hours();
+        $this->application->emailMessages()->create([...$base, 'direction' => EmailMessage::INBOUND, 'status' => EmailMessage::RECEIVED,
+            'from_email' => 'jane@acme-careers.com', 'is_auto_reply' => true, 'body_text' => 'I am out of office.', 'received_at' => now()]);
+        $this->travel(1)->hours();
+        $latest = $this->application->emailMessages()->create([...$base, 'direction' => EmailMessage::INBOUND, 'status' => EmailMessage::RECEIVED,
+            'from_email' => 'jane@acme-careers.com', 'body_text' => "Tuesday 3pm works.\n\nOn Tue, Alex wrote:\n> I am available",
+            'received_at' => now(), 'analysis' => $this->analysis(), 'analysis_state' => 'done']);
+
+        Http::fake([
+            'ai.test/v1/replies/analyze' => Http::response($this->analysis()),
+            'ai.test/v1/replies/draft' => Http::response(['subject' => 'Re: x', 'body' => 'Dear Jane, confirmed.', 'needs_input' => [],
+                'validation' => ['errors' => [], 'warnings' => [], 'attempts' => 1]]),
+        ]);
+        $this->actingAs($this->user)->post(route('replies.analyze', $latest));
+        $this->actingAs($this->user)->post(route('replies.draft', $latest));
+
+        foreach (['replies/analyze', 'replies/draft'] as $endpoint) {
+            Http::assertSent(function (HttpRequest $r) use ($endpoint) {
+                if (! str_contains($r->url(), $endpoint)) {
+                    return false;
+                }
+                $history = $r['history'];
+
+                return count($history) === 2
+                    && $history[0]['sender'] === 'employer' && str_contains($history[0]['text'], 'invite you to a video interview')
+                    && ! str_contains($history[0]['text'], 'I am applying') // quoted text stripped
+                    && $history[1] === ['sender' => 'candidate', 'at' => $history[1]['at'], 'text' => 'I am available Tue 2-5pm SGT.']
+                    && $r['reply_text'] === 'Tuesday 3pm works.';
+            });
+        }
+    }
 }

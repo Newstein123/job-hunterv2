@@ -15,20 +15,15 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import { asText } from '@/lib/format';
 
-type RuleSections =
-    | 'email_rules'
-    | 'application_rules'
-    | 'sending_rules'
-    | 'cv_rules';
+type RuleSections = 'email_rules' | 'application_rules' | 'cv_rules';
 type Rules = Partial<Record<RuleSections, Record<string, unknown>>>;
 
 type Props = {
     rules: Rules;
     defaults: Record<RuleSections, Record<string, unknown>>;
-    weekdays: string[];
 };
 
-export default function EditRules({ rules, defaults, weekdays }: Props) {
+export default function EditRules({ rules, defaults }: Props) {
     const value = (section: RuleSections, key: string) => rules[section]?.[key];
     const text = (section: RuleSections, key: string) =>
         asText(value(section, key));
@@ -288,121 +283,6 @@ export default function EditRules({ rules, defaults, weekdays }: Props) {
                                                 )}
                                             />
                                         </Field>
-                                    </CardContent>
-                                </Card>
-
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle>Sending window</CardTitle>
-                                        <CardDescription>
-                                            When emails are allowed to be sent.
-                                            Leave the timezone empty to use each
-                                            job's country time (the employer's
-                                            local time).
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="grid gap-4 sm:grid-cols-3">
-                                        <div className="flex flex-wrap items-center gap-2 sm:col-span-3">
-                                            <span className="text-sm text-muted-foreground">
-                                                Career Coaching Center windows
-                                                (employer's time):
-                                            </span>
-                                            {[
-                                                ['Morning', '06:30', '10:30'],
-                                                ['Midday', '11:30', '15:30'],
-                                            ].map(([label, start, end]) => (
-                                                <Button
-                                                    key={label}
-                                                    type="button"
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => {
-                                                        const set = (
-                                                            id: string,
-                                                            v: string,
-                                                        ) => {
-                                                            const el =
-                                                                document.getElementById(
-                                                                    id,
-                                                                ) as HTMLInputElement | null;
-                                                            if (el) {
-                                                                el.value = v;
-                                                            }
-                                                        };
-                                                        set(
-                                                            'sending_rules.start_time',
-                                                            start,
-                                                        );
-                                                        set(
-                                                            'sending_rules.end_time',
-                                                            end,
-                                                        );
-                                                        set(
-                                                            'sending_rules.timezone',
-                                                            '',
-                                                        );
-                                                    }}
-                                                >
-                                                    {label} {start}–{end}
-                                                </Button>
-                                            ))}
-                                            <span className="basis-full text-xs text-muted-foreground">
-                                                Course guidance for applications
-                                                from job websites (morning) and
-                                                other outreach (midday). Click
-                                                one, then Save rules.
-                                            </span>
-                                        </div>
-                                        {input(
-                                            'sending_rules',
-                                            'timezone',
-                                            'Timezone',
-                                            'text',
-                                            'Empty = job country time',
-                                        )}
-                                        {input(
-                                            'sending_rules',
-                                            'start_time',
-                                            'Start',
-                                            'time',
-                                        )}
-                                        {input(
-                                            'sending_rules',
-                                            'end_time',
-                                            'End',
-                                            'time',
-                                        )}
-                                        <fieldset className="grid gap-2 sm:col-span-3">
-                                            <legend className="mb-2 text-sm font-medium">
-                                                Allowed days{' '}
-                                                <span className="font-normal text-muted-foreground">
-                                                    (none checked = default,
-                                                    Mon–Fri)
-                                                </span>
-                                            </legend>
-                                            <div className="flex flex-wrap gap-4">
-                                                {weekdays.map((day) => (
-                                                    <label
-                                                        key={day}
-                                                        className="flex items-center gap-2 text-sm"
-                                                    >
-                                                        <input
-                                                            type="checkbox"
-                                                            name="sending_rules[allowed_days][]"
-                                                            value={day}
-                                                            defaultChecked={listValue(
-                                                                'sending_rules',
-                                                                'allowed_days',
-                                                                ',',
-                                                            )
-                                                                .split(',')
-                                                                .includes(day)}
-                                                        />
-                                                        {day.slice(0, 3)}
-                                                    </label>
-                                                ))}
-                                            </div>
-                                        </fieldset>
                                     </CardContent>
                                 </Card>
 

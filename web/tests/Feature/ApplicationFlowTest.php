@@ -103,8 +103,6 @@ class ApplicationFlowTest extends TestCase
         $this->assertSame(Application::GENERATION_DONE, $application->generation_state);
         $this->assertSame($this->backend->id, $application->resume_id);
         $this->assertSame(json_decode(file_get_contents(base_path('tests/Fixtures/pipeline_result.json')), true)['email']['subject'], $application->subject);
-        // Fixture: 2026-09-30T10:00:00+08:00. Must survive the round trip as the same instant.
-        $this->assertSame('2026-09-30T02:00:00+00:00', $application->earliest_send_at->utc()->toIso8601String());
         $this->assertSame(['PHP', 'Laravel', 'MySQL', 'REST API', 'Docker'], $application->latestStrategy->skill_strategy['emphasize']);
 
         $analysis = $this->job->latestAnalysis;

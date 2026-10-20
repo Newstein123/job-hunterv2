@@ -42,7 +42,7 @@ is a fixed template and says nothing about real model quality.
 ## Connecting Gmail accounts
 
 Users can connect several Gmail accounts (Email accounts page). Each has its own daily limit and health status;
-approved applications are queued and sent by the scheduler inside the sending window, and replies are detected
+approved applications are queued and sent by the scheduler, now or at the time you pick, and replies are detected
 from thread headers every 10 minutes.
 
 1. In [Google Cloud Console](https://console.cloud.google.com/): create a project and enable the **Gmail API**.

@@ -17,6 +17,15 @@ ReplyCategory = Literal[
     "other",
 ]
 
+
+class ThreadMessage(BaseModel):
+    """An earlier message in the conversation, after the application email."""
+
+    sender: Literal["employer", "candidate"]
+    at: str | None = None  # when it was sent or received, as given
+    text: str
+
+
 # Application status the user is offered for each category (they confirm it).
 SUGGESTED_STATUS: dict[str, str | None] = {
     "interview_invite": "interview",

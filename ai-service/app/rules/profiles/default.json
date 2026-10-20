@@ -25,17 +25,5 @@
     "skills_to_emphasize": [],
     "claims_to_avoid": [],
     "max_emphasized_skills": 5
-  },
-  "sending_rules": {
-    "timezone": "UTC",
-    "allowed_days": [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday"
-    ],
-    "start_time": "09:00",
-    "end_time": "17:00"
   }
 }

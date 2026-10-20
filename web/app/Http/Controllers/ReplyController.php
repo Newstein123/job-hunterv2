@@ -80,8 +80,8 @@ class ReplyController extends Controller
         ]);
         $account = EmailAccount::query()->whereKey($data['email_account_id'])->firstOrFail();
 
-        $sent = $queue->queueReply($message, $account, $request->user());
-        $this->toast($sent->status === EmailMessage::QUEUED ? 'Reply queued; sending shortly.' : 'Reply scheduled for your next sending window.');
+        $queue->queueReply($message, $account, $request->user());
+        $this->toast('Reply queued; sending shortly.');
 
         return back();
     }

@@ -39,8 +39,7 @@ class ApplicationFilterTest extends TestCase
             'resume_id' => $this->user->resumes()->value('id'), 'subject' => "{$position} - Application",
         ]);
         $app->strategies()->create(['match' => [], 'resume_selection' => [], 'skill_strategy' => [], 'meta' => [],
-            'application_strategy' => ['sending_rules' => ['timezone' => 'Asia/Singapore',
-                'allowed_days' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], 'start_time' => '09:00', 'end_time' => '17:00']]]);
+            'application_strategy' => []]);
 
         return $app;
     }

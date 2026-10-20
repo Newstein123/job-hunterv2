@@ -1,5 +1,5 @@
 from app.llm.client import FakeLLMClient
-from app.models.reply import ReplyAnalysis
+from app.models.reply import ReplyAnalysis, ThreadMessage
 from app.pipelines.replies import analyze_reply, draft_reply
 from app.rules.models import Rules
 
@@ -75,3 +75,45 @@ def test_draft_uses_notes_and_blocks_invented_claims(backend_analysis, profile):
     assert draft.validation.attempts == 2
     assert "Kubernetes" in llm.calls[1]["prompt"]  # repair prompt named the violation
     assert "SGD 9,000" in draft.body  # salary allowed because the candidate wrote it in the notes
+
+
+FOLLOW_UP = "Hi Alex, Tuesday 3pm works. Please also bring your portfolio. Best, Jane"
+HISTORY = [
+    ThreadMessage(sender="employer", at="2026-10-05", text=REPLY),
+    ThreadMessage(sender="candidate", at="2026-10-06",
+                  text="Thank you. I am available Tue and Wed 2-5pm SGT. My expected salary is SGD 9,000 per month."),
+]
+
+
+def test_analysis_sees_earlier_messages_but_quotes_only_the_newest(backend_analysis):
+    llm = FakeLLMClient([_analysis(evidence_quotes=["Tuesday 3pm works", "Could you share your availability next week?"])])
+    result = analyze_reply(backend_analysis, SENT, FOLLOW_UP, llm, history=HISTORY)
+    prompt = llm.calls[0]["prompt"]
+    assert "Tue and Wed 2-5pm SGT" in prompt and prompt.index("Tue and Wed") < prompt.index("Tuesday 3pm works")
+    assert result.evidence_quotes == ["Tuesday 3pm works"]  # the quote from the older message is dropped
+
+
+def test_draft_may_repeat_what_the_candidate_already_said(backend_analysis, profile):
+    analysis = ReplyAnalysis.model_validate({**_analysis(evidence_quotes=[]), "suggested_status": "interview"})
+    llm = FakeLLMClient([_draft(["Thank you, Tuesday 3pm is confirmed. I will bring my portfolio.",
+                                 "As mentioned, my expected salary is SGD 9,000 per month."])])
+    draft = draft_reply(backend_analysis, profile, "Subject", SENT, FOLLOW_UP, analysis, "", Rules(), llm,
+                        history=HISTORY)
+    assert draft.validation.ok, draft.validation.errors  # the amount came from the candidate's earlier answer
+    assert "EARLIER MESSAGES" in llm.calls[0]["prompt"] and "Tue and Wed 2-5pm SGT" in llm.calls[0]["prompt"]
+
+    # An amount nobody wrote is still blocked.
+    llm = FakeLLMClient([_draft(["My expected salary is SGD 12,000 per month."])] * 2)
+    draft = draft_reply(backend_analysis, profile, "Subject", SENT, FOLLOW_UP, analysis, "", Rules(), llm,
+                        history=HISTORY)
+    assert any("SGD 12,000" in e for e in draft.validation.errors)
+
+
+def test_history_keeps_the_newest_messages_within_limits():
+    from app.prompts import thread_history
+
+    many = [ThreadMessage(sender="employer", text=f"message {i} " + "x" * 3000) for i in range(15)]
+    rendered = thread_history.render(many)
+    assert "message 14" in rendered and "message 0 " not in rendered
+    assert len(rendered) <= thread_history.MAX_TOTAL_CHARS + 200 and "[...]" in rendered
+    assert thread_history.render([]) == "(none)"

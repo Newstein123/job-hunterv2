@@ -5,7 +5,6 @@ namespace App\Services\AiService;
 use App\Enums\ApplicationStatus;
 use App\Models\Application;
 use App\Models\Resume;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -76,8 +75,6 @@ class ApplicationGenerator
                 'body' => $email['body'],
                 'cover_letter' => $email['cover_letter'],
                 'validation' => $email['validation'],
-                // Eloquent stores the wall-clock time without the offset, so normalize to UTC first.
-                'earliest_send_at' => Carbon::parse($result['application_strategy']['earliest_allowed_send_time'])->utc(),
                 'edited_at' => null,
             ]);
         });

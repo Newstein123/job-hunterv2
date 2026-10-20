@@ -9,7 +9,6 @@ use App\Services\Mail\EmailComposer;
 use App\Services\Mail\MailProvider;
 use App\Services\Mail\MailProviderException;
 use App\Services\Mail\RecipientValidator;
-use App\Services\Mail\SendingWindow;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -38,7 +37,7 @@ class SendEmailMessage implements ShouldBeUnique, ShouldQueue
 
     public function handle(MailProvider $provider, EmailComposer $composer, RecipientValidator $recipients): void
     {
-        $message = $this->message->fresh(['application.job', 'application.latestStrategy', 'account']);
+        $message = $this->message->fresh(['application.job', 'account']);
         if ($message === null || $message->status !== EmailMessage::SENDING) {
             return;
         }
@@ -57,18 +56,9 @@ class SendEmailMessage implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        $window = SendingWindow::fromRules($application->latestStrategy?->application_strategy['sending_rules'] ?? null);
-        // An exact time the user picked is honoured even outside the window; the daily limit always applies.
-        if ($message->respect_window && ! $window->allows(now())) {
-            $message->update(['status' => EmailMessage::SCHEDULED, 'scheduled_at' => $window->nextAllowed(now())]);
-
-            return;
-        }
+        // Over the daily limit: try again at the same time tomorrow.
         if (! $account->hasCapacity()) {
-            $next = $message->respect_window
-                ? $window->nextAllowed(now()->utc()->addDay()->startOfDay())
-                : ($message->scheduled_at ?? now())->addDay(); // same local time tomorrow
-            $message->update(['status' => EmailMessage::SCHEDULED, 'scheduled_at' => $next]);
+            $message->update(['status' => EmailMessage::SCHEDULED, 'scheduled_at' => ($message->scheduled_at ?? now())->addDay()]);
 
             return;
         }

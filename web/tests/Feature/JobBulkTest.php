@@ -48,8 +48,7 @@ class JobBulkTest extends TestCase
             'resume_id' => $this->user->resumes()->value('id'), 'subject' => "{$position} - Application",
         ]);
         $app->strategies()->create(['match' => [], 'resume_selection' => [], 'skill_strategy' => [], 'meta' => [],
-            'application_strategy' => ['sending_rules' => ['timezone' => 'Asia/Singapore',
-                'allowed_days' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], 'start_time' => '09:00', 'end_time' => '17:00']]]);
+            'application_strategy' => []]);
 
         return $job;
     }
@@ -108,18 +107,18 @@ class JobBulkTest extends TestCase
             ->assertInertia(fn ($p) => $p->has('jobs.data', 2)->where('jobs.data.0.application.scheduled_at', fn ($v) => $v !== null));
     }
 
-    public function test_keep_within_window_moves_time_to_next_slot(): void
+    public function test_schedule_now_queues_for_now(): void
     {
-        $job = $this->approvedJob('Late');
+        $this->travelTo('2026-10-03 13:00:00'); // Saturday 21:00 Singapore
+        $job = $this->approvedJob('Weekend');
 
         $this->actingAs($this->user)->post(route('jobs.bulk.schedule'), [
-            'job_ids' => [$job->id], 'email_account_id' => $this->account->id, 'keep_window' => '1',
-            'mode' => 'at', 'send_at' => '2026-10-03T08:00', 'timezone_mode' => 'country', // Saturday
-        ])->assertInertiaFlash('bulkResult.message',
-            'Scheduled 1 email(s) from me@gmail.com at 08:00 local time: 1 in Asia/Singapore. 1 moved to the next time your sending window allows.');
+            'job_ids' => [$job->id], 'email_account_id' => $this->account->id, 'mode' => 'now',
+        ])->assertInertiaFlash('bulkResult.message', 'Scheduled 1 email(s) from me@gmail.com, sending now.');
 
-        // Monday 09:00 Singapore
-        $this->assertSame('2026-10-05T01:00:00+00:00', $job->fresh()->application->outboundMessage->scheduled_at->utc()->toIso8601String());
+        $message = $job->fresh()->application->outboundMessage;
+        $this->assertSame(EmailMessage::QUEUED, $message->status);
+        $this->assertTrue($message->scheduled_at->equalTo(now()));
     }
 
     public function test_bulk_schedule_validates_input(): void
@@ -128,7 +127,7 @@ class JobBulkTest extends TestCase
         $foreign = EmailAccount::factory()->create();
 
         $this->actingAs($this->user)->post(route('jobs.bulk.schedule'), [
-            'job_ids' => [$job->id], 'email_account_id' => $foreign->id, 'mode' => 'earliest',
+            'job_ids' => [$job->id], 'email_account_id' => $foreign->id, 'mode' => 'now',
         ])->assertSessionHasErrors('email_account_id');
         $this->actingAs($this->user)->post(route('jobs.bulk.schedule'), [
             'job_ids' => [$job->id], 'email_account_id' => $this->account->id, 'mode' => 'at',
@@ -139,7 +138,7 @@ class JobBulkTest extends TestCase
             'send_at' => '2026-10-01T10:00', 'timezone_mode' => 'fixed',
         ])->assertSessionHasErrors('timezone');
         $this->actingAs($this->user)->post(route('jobs.bulk.schedule'), [
-            'job_ids' => [], 'email_account_id' => $this->account->id, 'mode' => 'earliest',
+            'job_ids' => [], 'email_account_id' => $this->account->id, 'mode' => 'now',
         ])->assertSessionHasErrors('job_ids');
     }
 
@@ -147,7 +146,7 @@ class JobBulkTest extends TestCase
     {
         $job = $this->approvedJob('A');
         $this->actingAs($this->user)->post(route('jobs.bulk.schedule'), [
-            'job_ids' => [$job->id], 'email_account_id' => $this->account->id, 'mode' => 'earliest',
+            'job_ids' => [$job->id], 'email_account_id' => $this->account->id, 'mode' => 'now',
         ]);
         $foreign = JobPosting::factory()->create();
 
@@ -169,19 +168,18 @@ class JobBulkTest extends TestCase
         ])->assertSessionHasNoErrors()->assertInertiaFlash('bulkResult.message',
             'Scheduled 3 email(s) from me@gmail.com at 06:30 local time: 1 in Asia/Bangkok, 1 in Australia/Sydney, 1 in Asia/Singapore.');
 
-        // 06:30 local in each country, kept exactly even though it is before the 09:00 window.
+        // 06:30 local in each country, kept exactly.
         $utc = fn (JobPosting $j) => $j->fresh()->application->outboundMessage->scheduled_at->utc()->toIso8601String();
         $this->assertSame('2026-09-30T23:30:00+00:00', $utc($th)); // UTC+7
         $this->assertSame('2026-09-30T20:30:00+00:00', $utc($au)); // UTC+10 (AEST)
         $this->assertSame('2026-09-30T22:30:00+00:00', $utc($sg)); // UTC+8
-        $this->assertFalse($th->fresh()->application->outboundMessage->respect_window);
 
         $this->actingAs($this->user)->get(route('jobs.index', ['stage' => 'scheduled']))
             ->assertInertia(fn ($p) => $p->where('jobs.data', fn ($rows) => collect($rows)->pluck('application.scheduled_tz')
                 ->sort()->values()->all() === ['Asia/Bangkok', 'Asia/Singapore', 'Australia/Sydney']));
     }
 
-    public function test_exact_time_outside_window_is_sent_at_that_time(): void
+    public function test_exact_time_is_sent_at_that_time(): void
     {
         Http::fake([
             'gmail.googleapis.com/*' => Http::response(['id' => 'm1', 'threadId' => 't1']),

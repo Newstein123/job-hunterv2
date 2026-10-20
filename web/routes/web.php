@@ -34,7 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('resumes', ResumeController::class)->only(['index', 'store', 'update', 'destroy']);
 
     Route::get('jobs/import', [JobImportController::class, 'create'])->name('jobs.import');
-    Route::post('jobs/analyze', [JobPostingController::class, 'analyzeAll'])->name('jobs.analyze-all');
+    Route::post('jobs/bulk/analyze', [JobBulkController::class, 'analyze'])->name('jobs.bulk.analyze');
     Route::post('jobs/bulk/generate', [JobBulkController::class, 'generate'])->name('jobs.bulk.generate');
     Route::post('jobs/bulk/schedule', [JobBulkController::class, 'schedule'])->name('jobs.bulk.schedule');
     Route::post('jobs/bulk/cancel', [JobBulkController::class, 'cancel'])->name('jobs.bulk.cancel');

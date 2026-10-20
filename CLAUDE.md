@@ -473,33 +473,26 @@ Examples:
 
 ------------------------------------------------------------------------
 
-### D. Sending Rules
+### D. Sending Time (no sending window)
 
-Examples:
+Removed as a rule by the product owner, 2026-10-21. There is no
+sending window that holds emails back or moves them.
 
-``` json
-{
-  "timezone": "Asia/Singapore",
-  "allowed_days": [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday"
-  ],
-  "start_time": "09:00",
-  "end_time": "17:00"
-}
-```
+An approved email goes out either:
 
-The MVP should interpret this as:
+-   now (Approve & send, or "Now" when scheduling), or
+-   at an exact time the user picks (in each job's country time or one
+    fixed timezone).
 
-> When is the email allowed to be sent?
+Suggested send times (Career Coaching Center: 06:30--10:30 employer's
+time for job-site applications, 11:30--15:30 for other outreach) are
+shown as information only. They are never enforced.
 
 Do not claim that a specific time is universally the "best" time to
 apply unless supported by validated evidence.
 
-User-configured schedules should take precedence.
+Daily limits, the gap between sends and the speculative cap still
+apply: they are account protection, not a sending window.
 
 ------------------------------------------------------------------------
 
@@ -526,8 +519,7 @@ Example:
   "country": "Singapore",
   "cv_rules": {},
   "email_rules": {},
-  "application_rules": {},
-  "sending_rules": {}
+  "application_rules": {}
 }
 ```
 
@@ -576,8 +568,7 @@ Knowledge
 Rules
 ├── User Rules
 ├── Application Rules
-├── Market Rules
-└── Sending Rules
+└── Market Rules
 ```
 
 For MVP, only implement the Rules layer.
@@ -648,7 +639,7 @@ cancelled
 The queue should consider:
 
 -   account availability
--   sending schedule
+-   the time the user scheduled (or now)
 -   provider limits
 -   duplicate application protection
 -   recipient validity

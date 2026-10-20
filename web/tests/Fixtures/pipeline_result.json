@@ -484,20 +484,6 @@
       "expert in everything",
       "rockstar"
     ],
-    "earliest_allowed_send_time": "2026-09-30T10:00:00+08:00",
-    "send_timezone": "Asia/Singapore",
-    "sending_rules": {
-      "timezone": "Asia/Singapore",
-      "allowed_days": [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday"
-      ],
-      "start_time": "09:00",
-      "end_time": "17:00"
-    },
     "letter_style": "modern",
     "job_source": null
   },

@@ -178,19 +178,26 @@ class JobMatchTest extends TestCase
             ->assertInertia(fn ($page) => $page->where('jobs.data.0.match.stale', true));
     }
 
-    public function test_analyze_all_queues_unanalyzed_failed_and_stale_jobs_only(): void
+    public function test_bulk_analyze_queues_only_selected_jobs(): void
     {
-        Http::fake(['ai.test/v1/jobs/match' => Http::response($this->preview())]);
-        $fresh = JobPosting::factory()->for($this->user)->create();
-        AnalyzeJobPosting::start($fresh);
-        $never = JobPosting::factory()->for($this->user)->create();
+        $picked = JobPosting::factory()->for($this->user)->create();
         $failed = JobPosting::factory()->for($this->user)->create(['analysis_state' => JobPosting::ANALYSIS_FAILED]);
+        $running = JobPosting::factory()->for($this->user)->create(['analysis_state' => JobPosting::ANALYSIS_RUNNING]);
+        $company = JobPosting::factory()->for($this->user)->create(['kind' => JobPosting::KIND_SPECULATIVE]);
+        $notSelected = JobPosting::factory()->for($this->user)->create();
+        $foreign = JobPosting::factory()->create();
 
         Queue::fake();
-        $this->actingAs($this->user)->post(route('jobs.analyze-all'))->assertRedirect();
+        $this->actingAs($this->user)->post(route('jobs.bulk.analyze'), [
+            'job_ids' => [$picked->id, $failed->id, $running->id, $company->id, $foreign->id],
+        ])->assertSessionHasNoErrors()->assertInertiaFlash('bulkResult.message', 'Analyzing 2 job(s)…');
 
         Queue::assertPushed(AnalyzeJobPosting::class, 2);
-        Queue::assertPushed(AnalyzeJobPosting::class, fn ($j) => in_array($j->posting->id, [$never->id, $failed->id], true));
+        Queue::assertPushed(AnalyzeJobPosting::class, fn ($j) => in_array($j->posting->id, [$picked->id, $failed->id], true));
+        Queue::assertNotPushed(AnalyzeJobPosting::class, fn ($j) => $j->posting->id === $notSelected->id);
+
+        $this->actingAs($this->user)->post(route('jobs.bulk.analyze'), ['job_ids' => range(1, 101)])
+            ->assertSessionHasErrors('job_ids');
     }
 
     public function test_adding_a_job_queues_analysis_and_other_users_cannot_trigger_it(): void

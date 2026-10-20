@@ -32,7 +32,7 @@ class RecipientChecksTest extends TestCase
     {
         parent::setUp();
         Storage::fake(Resume::DISK);
-        $this->travelTo('2026-09-30 10:00:00'); // Wednesday, inside the default 09:00-17:00 UTC window
+        $this->travelTo('2026-09-30 10:00:00');
         $this->user = User::factory()->create();
         CareerProfile::factory()->for($this->user)->create();
         Resume::factory()->withFile()->for($this->user)->create();
@@ -150,9 +150,9 @@ class RecipientChecksTest extends TestCase
 
     public function test_scheduled_email_keeps_its_time_with_new_recipients(): void
     {
-        $this->travelTo('2026-09-30 20:00:00'); // after the window: scheduled for tomorrow
         $app = $this->generated('careers@acme-careers.com');
         $this->approveAndSend($app);
+        $app->fresh()->outboundMessage->update(['status' => EmailMessage::SCHEDULED, 'scheduled_at' => now()->addDay()]);
         $before = $app->fresh()->outboundMessage->scheduled_at;
 
         $this->actingAs($this->user)->put(route('applications.recipients', $app), ['to' => 'talent@acme-careers.com'])

@@ -7,10 +7,10 @@ from app.llm.client import LLMClient
 from app.models.application import EmailDraft, ValidationReport
 from app.models.candidate import CandidateProfile
 from app.models.job import JobAnalysis
-from app.models.reply import SUGGESTED_STATUS, ReplyAnalysis, ReplyAnalysisLLM, ReplyDraft, ReplyDraftLLM
+from app.models.reply import SUGGESTED_STATUS, ReplyAnalysis, ReplyAnalysisLLM, ReplyDraft, ReplyDraftLLM, ThreadMessage
 from app.pipelines.candidate_analysis import analyze_candidate
 from app.pipelines.email_generation import check_grounding
-from app.prompts import reply_analysis, reply_draft
+from app.prompts import reply_analysis, reply_draft, thread_history
 from app.rules.models import Rules
 from app.rules.validator import word_count
 
@@ -23,10 +23,12 @@ def _norm(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip().lower()
 
 
-def analyze_reply(job: JobAnalysis, sent_body: str, reply_text: str, llm: LLMClient) -> ReplyAnalysis:
+def analyze_reply(
+    job: JobAnalysis, sent_body: str, reply_text: str, llm: LLMClient, history: list[ThreadMessage] | None = None
+) -> ReplyAnalysis:
     raw = llm.generate_structured(
         reply_analysis.SYSTEM,
-        reply_analysis.build_prompt(f"{job.title} at {job.company}", sent_body, reply_text),
+        reply_analysis.build_prompt(f"{job.title} at {job.company}", sent_body, reply_text, history),
         ReplyAnalysisLLM,
         task="reply_analysis",
         think=False,  # classification: no reasoning needed
@@ -77,13 +79,16 @@ def draft_reply(
     rules: Rules,
     llm: LLMClient,
     max_attempts: int = 2,
+    history: list[ThreadMessage] | None = None,
 ) -> ReplyDraft:
+    history = history or []
     facts, candidate = _facts(profile)
     email_rules = rules.email_rules
     max_words = min(email_rules.max_words, 220)
     args = dict(
         job=f"{job.title} at {job.company}",
         sent=sent_body.strip()[:4000],
+        history=thread_history.render(history),
         reply=reply_text.strip()[:6000],
         analysis=json.dumps(analysis.model_dump(include={"category", "requests", "questions", "dates_mentioned"})),
         candidate=json.dumps(facts, indent=2),
@@ -96,7 +101,10 @@ def draft_reply(
     repair = ""
     report = ValidationReport()
     draft: ReplyDraftLLM | None = None
-    notes_norm = _norm(notes)
+    # What the candidate supplied themselves (notes, and their earlier answers) may be repeated.
+    supplied = "\n".join([notes, *(m.text for m in history if m.sender == "candidate")])
+    notes_norm = _norm(supplied)
+    notes_compact = notes_norm.replace(" ", "")
     for attempt in range(1, max_attempts + 1):
         draft = llm.generate_structured(
             reply_draft.SYSTEM, reply_draft.build_prompt(**args, repair=repair), ReplyDraftLLM, task="reply_draft"
@@ -107,13 +115,12 @@ def draft_reply(
         words = word_count(text)
         if words > max_words:
             errors.append(f"Reply has {words} words; max is {max_words}")
-        # Money amounts only when the candidate wrote them in their notes (e.g. salary expectations).
-        notes_compact = _norm(notes).replace(" ", "")
+        # Money amounts only when the candidate wrote them (e.g. salary expectations in their notes).
         for amount in _AMOUNT.findall(_PLACEHOLDER.sub("", text)):
             if _norm(amount).replace(" ", "") not in notes_compact:
-                errors.append(f"Mentions the amount {amount.strip()!r}, which isn't in your notes")
+                errors.append(f"Mentions the amount {amount.strip()!r}, which isn't in your notes or earlier answers")
         grounding_errors, warnings = check_grounding(_PLACEHOLDER.sub("", text), job, candidate, do_not_claim=[])
-        # Facts the candidate supplied in their notes are allowed.
+        # Facts the candidate supplied themselves are allowed.
         grounding_errors = [e for e in grounding_errors if not any(
             token in notes_norm for token in re.findall(r"'([^']+)'", e.lower()))]
         errors += grounding_errors

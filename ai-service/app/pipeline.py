@@ -137,7 +137,7 @@ def run_pipeline(
         skills = build_skill_strategy(match_result, selection, candidate, rules.application_rules)
 
     logger.info("stage 6: application strategy")
-    strategy = build_application_strategy(job, skills, rules, now)
+    strategy = build_application_strategy(job, skills, rules)
 
     logger.info("stage 7: email generation")
     email = generate_email(analysis, candidate, selection, skills, strategy, rules, llm,

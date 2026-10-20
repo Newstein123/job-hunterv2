@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ApplicationStatus;
+use App\Jobs\AnalyzeJobPosting;
 use App\Models\EmailAccount;
 use App\Models\JobPosting;
 use App\Services\ApplicationStarter;
@@ -23,6 +24,32 @@ use Inertia\Inertia;
 class JobBulkController extends Controller
 {
     public const MAX_SELECTION = 100;
+
+    /**
+     * Analyze the fit of selected jobs (one AI call each). Only what the user selects is analyzed,
+     * at most MAX_SELECTION at a time, so a large import can't be sent to the AI by one click.
+     */
+    public function analyze(Request $request): RedirectResponse
+    {
+        if (! $request->user()->canAnalyzeJobs()) {
+            throw ValidationException::withMessages(['bulk' => 'Add your career profile and an active resume first.']);
+        }
+
+        $jobs = [];
+        $skipped = [];
+        foreach ($this->selected($request) as $job) {
+            if ($job->isSpeculative()) {
+                $skipped[] = $this->skip($job, 'is a company from your list, with no posting to analyze');
+            } elseif ($job->isAnalyzing()) {
+                $skipped[] = $this->skip($job, 'is already being analyzed');
+            } else {
+                $jobs[] = $job;
+            }
+        }
+        AnalyzeJobPosting::start(...$jobs);
+
+        return $this->done('Analyzing '.count($jobs).' job(s)…', count($jobs), $skipped);
+    }
 
     /** Draft applications for selected jobs that don't have one yet. */
     public function generate(Request $request, ApplicationStarter $starter): RedirectResponse
@@ -48,27 +75,24 @@ class JobBulkController extends Controller
     }
 
     /**
-     * Queue approved applications to send from one account. With a specific time, the time is read in
-     * each job's country timezone (06:30 = 06:30 in Bangkok for Thailand, in Sydney for Australia), or
-     * in one fixed timezone, and is kept exactly unless the user asks to stay within the sending window.
+     * Queue approved applications to send from one account, now or at a specific time. A specific time is
+     * read in each job's country timezone (06:30 = 06:30 in Bangkok for Thailand, in Sydney for Australia),
+     * or in one fixed timezone, and is kept exactly.
      */
     public function schedule(Request $request, EmailQueue $queue): RedirectResponse
     {
         $user = $request->user();
         $data = $request->validate([
             'email_account_id' => ['required', 'integer', Rule::exists('email_accounts', 'id')->where('user_id', $user->id)],
-            'mode' => ['required', Rule::in(['earliest', 'at'])],
+            'mode' => ['required', Rule::in(['now', 'at'])],
             'send_at' => ['required_if:mode,at', 'nullable', 'date_format:Y-m-d\TH:i'],
             'timezone_mode' => ['required_if:mode,at', 'nullable', Rule::in(['country', 'fixed'])],
             'timezone' => ['required_if:timezone_mode,fixed', 'nullable', 'timezone:all'],
-            'keep_window' => ['nullable', 'boolean'],
         ]);
         $account = EmailAccount::query()->whereKey($data['email_account_id'])->firstOrFail();
         $exactTime = $data['mode'] === 'at';
-        $respectWindow = ! $exactTime || $request->boolean('keep_window');
 
         $queued = [];
-        $moved = 0;
         $skipped = [];
         foreach ($this->selected($request) as $job) {
             $application = $job->application;
@@ -91,34 +115,28 @@ class JobBulkController extends Controller
             }
 
             try {
-                $message = DB::transaction(fn () => $queue->queue($application, $account, $user, $notBefore, $respectWindow));
+                DB::transaction(fn () => $queue->queue($application, $account, $user, $notBefore));
             } catch (ValidationException $e) {
                 $skipped[] = $this->skip($job, (string) collect($e->errors())->flatten()->first());
 
                 continue;
             }
-            $label = $tz ?? 'earliest allowed time';
+            $label = $tz ?? 'now';
             $queued[$label] = ($queued[$label] ?? 0) + 1;
-            if ($notBefore && $message->scheduled_at?->gt($notBefore->addMinute())) {
-                $moved++;
-            }
         }
 
         $total = array_sum($queued);
         $where = $exactTime
             ? ' at '.substr((string) $data['send_at'], 11).' local time: '.collect($queued)->map(fn ($n, $tz) => "{$n} in {$tz}")->implode(', ').'.'
-            : '.';
-        $note = $moved ? " {$moved} moved to the next time your sending window allows." : '';
+            : ', sending now.';
 
-        return $this->done("Scheduled {$total} email(s) from {$account->email}{$where}{$note}", $total, $skipped);
+        return $this->done("Scheduled {$total} email(s) from {$account->email}{$where}", $total, $skipped);
     }
 
-    /** The job's country timezone, else the application's resolved sending timezone, else UTC. */
+    /** The job's country timezone, else UTC. */
     private function jobTimezone(JobPosting $job): string
     {
-        return $job->country->timezone
-            ?? $job->application?->latestStrategy?->application_strategy['sending_rules']['timezone']
-            ?? 'UTC';
+        return $job->country?->timezone ?? 'UTC';
     }
 
     /** Cancel scheduled sends; the applications go back to Approved. */
@@ -153,7 +171,7 @@ class JobBulkController extends Controller
         ]);
 
         return $request->user()->jobPostings()->whereKey($data['job_ids'])
-            ->with(['country', 'application.job', 'application.resume', 'application.latestStrategy'])->get();
+            ->with(['country', 'application.job', 'application.resume'])->get();
     }
 
     /** @return array{job: string, reason: string} */

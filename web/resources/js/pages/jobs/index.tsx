@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage, usePoll } from '@inertiajs/react';
-import { CalendarClock, Plus, Sparkles, Upload, X } from 'lucide-react';
+import { CalendarClock, Plus, Search, Sparkles, Upload, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import ApplicationController from '@/actions/App/Http/Controllers/ApplicationController';
 import JobBulkController from '@/actions/App/Http/Controllers/JobBulkController';
@@ -131,6 +131,12 @@ export default function Jobs({
     );
     const ids = chosen.map((j) => j.id);
     const counts = {
+        analyze: chosen.filter(
+            (j) =>
+                j.kind === 'posting' &&
+                j.analysis_state !== 'pending' &&
+                j.analysis_state !== 'running',
+        ).length,
         generate: chosen.filter((j) => !j.application).length,
         schedule: chosen.filter((j) => j.application?.status === 'approved')
             .length,
@@ -152,14 +158,14 @@ export default function Jobs({
     const toggleAll = () =>
         setSelected(allOnPage ? new Set() : new Set(rows.map((j) => j.id)));
 
-    const bulk = (action: 'generate' | 'cancel', question: string) => {
+    const bulk = (
+        action: 'analyze' | 'generate' | 'cancel',
+        question: string,
+    ) => {
         if (!confirm(question)) {
             return;
         }
-        const route =
-            action === 'generate'
-                ? JobBulkController.generate()
-                : JobBulkController.cancel();
+        const route = JobBulkController[action]();
         router.post(
             route.url,
             { job_ids: ids },
@@ -183,20 +189,9 @@ export default function Jobs({
                 <div className="flex flex-wrap items-start justify-between gap-4">
                     <Heading
                         title="Jobs"
-                        description="Filter, select several jobs, then draft or schedule them together. Each email is still reviewed and approved on its own page."
+                        description="Filter, select several jobs, then analyze, draft or schedule them together. Each email is still reviewed and approved on its own page."
                     />
                     <div className="flex flex-wrap gap-2">
-                        {canAnalyze && (
-                            <Button variant="outline" asChild>
-                                <Link
-                                    href={JobPostingController.analyzeAll()}
-                                    as="button"
-                                    preserveScroll
-                                >
-                                    <Sparkles /> Analyze all
-                                </Link>
-                            </Button>
-                        )}
                         <Button variant="outline" asChild>
                             <Link href={JobImportController.create()}>
                                 <Upload /> Import CSV/Excel
@@ -338,6 +333,19 @@ export default function Jobs({
                         <span className="mr-2 text-sm font-medium">
                             {chosen.length} selected
                         </span>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={counts.analyze === 0 || !canAnalyze}
+                            onClick={() =>
+                                bulk(
+                                    'analyze',
+                                    `Analyze ${counts.analyze} job(s)? Each one uses the AI once.`,
+                                )
+                            }
+                        >
+                            <Search /> Analyze ({counts.analyze})
+                        </Button>
                         <Button
                             size="sm"
                             variant="outline"

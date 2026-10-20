@@ -20,27 +20,15 @@ class EmailQueue
 {
     public function __construct(private readonly RecipientValidator $recipients) {}
 
-    /**
-     * @param  CarbonInterface|null  $notBefore  a time the user picked
-     * @param  bool  $respectWindow  false: send at exactly $notBefore even outside the sending window
-     *                               (the user's explicit choice wins); true: move it to the next allowed slot
-     */
-    public function queue(
-        Application $application,
-        EmailAccount $account,
-        User $by,
-        ?CarbonInterface $notBefore = null,
-        bool $respectWindow = true,
-    ): EmailMessage {
-        $application->loadMissing(['job', 'resume', 'latestStrategy']);
+    /** @param  CarbonInterface|null  $notBefore  the time the user picked; null sends as soon as possible */
+    public function queue(Application $application, EmailAccount $account, User $by, ?CarbonInterface $notBefore = null): EmailMessage
+    {
+        $application->loadMissing(['job', 'resume']);
         $this->assertSendable($application, $account);
 
-        $window = SendingWindow::fromRules($application->latestStrategy?->application_strategy['sending_rules'] ?? null);
-        $exact = $notBefore !== null && ! $respectWindow;
-        $from = $notBefore !== null && $notBefore->isFuture() ? $notBefore : now();
-        $scheduledAt = $exact ? CarbonImmutable::instance($from)->utc() : $window->nextAllowed($from);
+        $scheduledAt = CarbonImmutable::instance($notBefore !== null && $notBefore->isFuture() ? $notBefore : now())->utc();
 
-        return DB::transaction(function () use ($application, $account, $by, $scheduledAt, $exact) {
+        return DB::transaction(function () use ($application, $account, $by, $scheduledAt) {
             $message = $application->emailMessages()->create([
                 'user_id' => $application->user_id,
                 'email_account_id' => $account->id,
@@ -52,7 +40,6 @@ class EmailQueue
                 'from_email' => $account->email,
                 'subject' => $application->subject,
                 'scheduled_at' => $scheduledAt,
-                'respect_window' => ! $exact,
             ]);
             $message->recordEvent('queued', ['scheduled_at' => $scheduledAt->toIso8601String()]);
             $application->transitionTo(ApplicationStatus::Queued, $by, "Queued to send from {$account->email}", [
@@ -82,13 +69,13 @@ class EmailQueue
     }
 
     /**
-     * Queue a reviewed reply. It goes into the same Gmail thread, at the earliest time the
-     * sending window allows. The application's status is not changed by replying.
+     * Queue a reviewed reply. It goes into the same Gmail thread as soon as possible.
+     * The application's status is not changed by replying.
      */
     public function queueReply(EmailMessage $draft, EmailAccount $account, User $by): EmailMessage
     {
         $fail = fn (string $field, string $message) => throw ValidationException::withMessages([$field => $message]);
-        $draft->loadMissing(['application.latestStrategy', 'inReplyTo']);
+        $draft->loadMissing(['application', 'inReplyTo']);
 
         if (! $draft->isReplyDraft() || $draft->status !== EmailMessage::DRAFT) {
             $fail('send', 'Only a reply draft can be sent.');
@@ -107,14 +94,12 @@ class EmailQueue
             $fail('recipient', "Can't send: ".implode('; ', $problems).'.');
         }
 
-        $window = SendingWindow::fromRules($draft->application->latestStrategy?->application_strategy['sending_rules'] ?? null);
-        $scheduledAt = $window->nextAllowed(now());
+        $scheduledAt = now();
         $draft->update([
             'email_account_id' => $account->id,
             'from_email' => $account->email,
-            'status' => $scheduledAt->isFuture() ? EmailMessage::SCHEDULED : EmailMessage::QUEUED,
+            'status' => EmailMessage::QUEUED,
             'scheduled_at' => $scheduledAt,
-            'respect_window' => true,
         ]);
         $draft->recordEvent('reply_queued', ['by' => $by->id, 'scheduled_at' => $scheduledAt->toIso8601String()]);
 

@@ -241,7 +241,6 @@ export type Strategy = {
         language: string;
         include_cover_letter: boolean;
         cover_letter_reason: string;
-        send_timezone: string;
     };
     meta: {
         model: string;
@@ -263,7 +262,6 @@ export type ApplicationDetail = {
     bcc: string[] | null;
     resume_id: number | null;
     validation: { errors: string[]; warnings: string[]; attempts: number };
-    earliest_send_at: string | null;
     edited_at: string | null;
     approved_at: string | null;
     resume: { id: number; label: string; original_filename: string } | null;

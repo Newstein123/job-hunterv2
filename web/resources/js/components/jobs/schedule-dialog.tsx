@@ -14,6 +14,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import SendTimeTips from '@/components/send-time-tips';
 import { NativeSelect } from '@/components/ui/native-select';
 import type { EmailAccount } from '@/types';
 
@@ -51,7 +52,7 @@ export default function ScheduleDialog({
     accounts: Pick<EmailAccount, 'id' | 'email' | 'status' | 'is_default'>[];
     onDone: () => void;
 }) {
-    const [mode, setMode] = useState<'earliest' | 'at'>('earliest');
+    const [mode, setMode] = useState<'now' | 'at'>('now');
     const [tzMode, setTzMode] = useState<'country' | 'fixed'>('country');
     const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const timezones = [...new Set([browserTz, ...MARKET_TIMEZONES])];
@@ -125,12 +126,11 @@ export default function ScheduleDialog({
                                         <input
                                             type="radio"
                                             name="mode"
-                                            value="earliest"
-                                            checked={mode === 'earliest'}
-                                            onChange={() => setMode('earliest')}
+                                            value="now"
+                                            checked={mode === 'now'}
+                                            onChange={() => setMode('now')}
                                         />
-                                        Earliest time each job's sending window
-                                        allows
+                                        Now
                                     </label>
                                     <label className="flex items-center gap-2 text-sm">
                                         <input
@@ -219,23 +219,7 @@ export default function ScheduleDialog({
                                                 message={errors.timezone}
                                             />
                                         </fieldset>
-                                        <label className="flex items-start gap-2 text-sm">
-                                            <input
-                                                type="checkbox"
-                                                name="keep_window"
-                                                value="1"
-                                                className="mt-1"
-                                            />
-                                            <span>
-                                                Keep within my sending window
-                                                <span className="block text-xs text-muted-foreground">
-                                                    Off: sends at exactly this
-                                                    time. On: a time outside
-                                                    your Rules window moves to
-                                                    the next allowed time.
-                                                </span>
-                                            </span>
-                                        </label>
+                                        <SendTimeTips />
                                     </div>
                                 )}
                                 <InputError message={errors.job_ids} />
