@@ -1,0 +1,5 @@
+# Allow-list: the image only needs the service code and its requirements.
+*
+!requirements.txt
+!app/
+app/**/__pycache__
