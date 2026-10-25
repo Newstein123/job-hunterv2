@@ -25,7 +25,7 @@ class DemoSeeder extends Seeder
             'name' => $profile['name'], 'password' => 'password', 'email_verified_at' => now(),
         ]);
         $user->jobPostings()->delete();
-        $user->resumes()->each(fn (Resume $r) => Storage::disk(Resume::DISK)->delete($r->path) && $r->delete());
+        $user->resumes()->each(fn (Resume $r) => Storage::disk(Resume::disk())->delete($r->path) && $r->delete());
         $user->careerProfile()->delete();
 
         $career = $user->careerProfile()->create([
@@ -50,7 +50,7 @@ class DemoSeeder extends Seeder
             'cloud_engineer.md' => 'Cloud / AWS CV'];
         foreach ($labels as $file => $label) {
             $path = "resumes/{$user->id}/{$file}";
-            Storage::disk(Resume::DISK)->put($path, (string) file_get_contents("{$examples}/resumes/{$file}"));
+            Storage::disk(Resume::disk())->put($path, (string) file_get_contents("{$examples}/resumes/{$file}"));
             $user->resumes()->create([
                 'label' => $label, 'original_filename' => $file, 'path' => $path,
                 'mime_type' => (string) mime_content_type("{$examples}/resumes/{$file}"),

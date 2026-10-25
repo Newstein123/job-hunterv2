@@ -33,7 +33,7 @@ class SpeculativeApplicationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Storage::fake(Resume::DISK);
+        Storage::fake(Resume::disk());
         $this->user = User::factory()->create();
         CareerProfile::factory()->for($this->user)->create();
         $this->resume = Resume::factory()->withFile()->for($this->user)->create(['label' => 'Web Developer CV']);

@@ -32,7 +32,7 @@ class ApplicationFlowTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Storage::fake(Resume::DISK);
+        Storage::fake(Resume::disk());
         config(['services.ai.url' => 'http://ai.test', 'services.ai.token' => 'secret']);
 
         $this->user = User::factory()->create();

@@ -17,6 +17,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Resume Disk
+    |--------------------------------------------------------------------------
+    |
+    | Uploaded resumes. Use a persistent bucket in production (e.g. the disk
+    | name of a Laravel Cloud bucket): a server's local disk is wiped on
+    | redeploy. Files are private and only served through the app.
+    |
+    */
+
+    'resume_disk' => env('RESUME_DISK', 'local'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |

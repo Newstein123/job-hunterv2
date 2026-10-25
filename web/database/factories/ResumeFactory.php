@@ -26,6 +26,6 @@ class ResumeFactory extends Factory
     /** Also write the file to the (faked) resume disk. */
     public function withFile(string $content = "PHP Laravel developer\n"): static
     {
-        return $this->afterCreating(fn (Resume $r) => Storage::disk(Resume::DISK)->put($r->path, $content));
+        return $this->afterCreating(fn (Resume $r) => Storage::disk(Resume::disk())->put($r->path, $content));
     }
 }

@@ -34,7 +34,11 @@ class Resume extends Model
     /** @use HasFactory<ResumeFactory> */
     use HasFactory;
 
-    public const DISK = 'local';
+    /** Where resume files live: local in development, an object storage bucket in production (RESUME_DISK). */
+    public static function disk(): string
+    {
+        return (string) config('filesystems.resume_disk', 'local');
+    }
 
     public const EXTENSIONS = ['pdf', 'docx', 'txt', 'md'];
 

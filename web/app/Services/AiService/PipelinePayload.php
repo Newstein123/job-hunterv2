@@ -26,7 +26,7 @@ class PipelinePayload
             'resumes' => $resumes->map(fn (Resume $r) => [
                 'id' => (string) $r->id,
                 'filename' => $r->original_filename,
-                'content_base64' => base64_encode(Storage::disk(Resume::DISK)->get($r->path)),
+                'content_base64' => base64_encode(Storage::disk(Resume::disk())->get($r->path)),
             ])->values()->all(),
             'user_rules' => $user->applicationRule?->rules ?: null,
             // Reuse the analysis made at import if the description hasn't changed since (saves one AI call).

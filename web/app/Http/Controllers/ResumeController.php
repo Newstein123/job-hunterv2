@@ -44,7 +44,7 @@ class ResumeController extends Controller
         $resume = $user->resumes()->create([
             'label' => $data['label'],
             'original_filename' => $file->getClientOriginalName(),
-            'path' => $file->store("resumes/{$user->id}", Resume::DISK),
+            'path' => $file->store("resumes/{$user->id}", Resume::disk()),
             'mime_type' => $file->getMimeType() ?? 'application/octet-stream',
             'size' => $file->getSize(),
         ]);
@@ -78,7 +78,7 @@ class ResumeController extends Controller
 
             return back();
         }
-        Storage::disk(Resume::DISK)->delete($resume->path);
+        Storage::disk(Resume::disk())->delete($resume->path);
         $resume->delete();
         $this->toastWithRecheck('Resume deleted.', $request->user()->reanalyzeOpenJobs());
 
@@ -107,7 +107,7 @@ class ResumeController extends Controller
     public function preview(Request $request, Resume $resume): HttpResponse
     {
         $this->ensureOwns($request, $resume);
-        $disk = Storage::disk(Resume::DISK);
+        $disk = Storage::disk(Resume::disk());
         abort_unless($disk->exists($resume->path), 404);
         $bytes = (string) $disk->get($resume->path);
         $headers = [
@@ -128,7 +128,7 @@ class ResumeController extends Controller
     {
         $this->ensureOwns($request, $resume);
 
-        return Storage::disk(Resume::DISK)->download($resume->path, $resume->original_filename);
+        return Storage::disk(Resume::disk())->download($resume->path, $resume->original_filename);
     }
 
     /**

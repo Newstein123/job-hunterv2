@@ -22,7 +22,7 @@ class ApplicationFilterTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Storage::fake(Resume::DISK);
+        Storage::fake(Resume::disk());
         $this->user = User::factory()->create();
         CareerProfile::factory()->for($this->user)->create();
         Resume::factory()->withFile()->for($this->user)->create();

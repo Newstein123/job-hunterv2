@@ -36,8 +36,8 @@ class EmailComposer
             $email->getHeaders()->addIdHeader('References', trim($parent, '<> '));
         }
         $resume = $application->resume;
-        if ($reply->attach_resume && $resume && Storage::disk(Resume::DISK)->exists($resume->path)) {
-            $email->attach((string) Storage::disk(Resume::DISK)->get($resume->path), $resume->original_filename, $resume->mime_type);
+        if ($reply->attach_resume && $resume && Storage::disk(Resume::disk())->exists($resume->path)) {
+            $email->attach((string) Storage::disk(Resume::disk())->get($resume->path), $resume->original_filename, $resume->mime_type);
         }
 
         return $email->toString();
@@ -47,7 +47,7 @@ class EmailComposer
     {
         $application->loadMissing(['job', 'resume', 'user.careerProfile']);
         $resume = $application->resume;
-        if ($resume === null || ! Storage::disk(Resume::DISK)->exists($resume->path)) {
+        if ($resume === null || ! Storage::disk(Resume::disk())->exists($resume->path)) {
             throw new MailProviderException('The selected resume file is missing.', MailProviderException::PERMANENT);
         }
 
@@ -57,7 +57,7 @@ class EmailComposer
             ->to((string) $application->job->contact_email)
             ->subject((string) $application->subject)
             ->text((string) $application->body)
-            ->attach((string) Storage::disk(Resume::DISK)->get($resume->path), $resume->original_filename, $resume->mime_type);
+            ->attach((string) Storage::disk(Resume::disk())->get($resume->path), $resume->original_filename, $resume->mime_type);
 
         if ($application->cc) {
             $email->cc(...$application->cc);

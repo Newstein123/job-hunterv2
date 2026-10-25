@@ -29,7 +29,7 @@ class JobBulkTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Storage::fake(Resume::DISK);
+        Storage::fake(Resume::disk());
         $this->travelTo('2026-09-30 02:00:00'); // Wednesday 10:00 Singapore
         $this->user = User::factory()->create();
         CareerProfile::factory()->for($this->user)->create();

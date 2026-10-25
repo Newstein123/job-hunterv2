@@ -31,7 +31,7 @@ class RecipientChecksTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Storage::fake(Resume::DISK);
+        Storage::fake(Resume::disk());
         $this->travelTo('2026-09-30 10:00:00');
         $this->user = User::factory()->create();
         CareerProfile::factory()->for($this->user)->create();

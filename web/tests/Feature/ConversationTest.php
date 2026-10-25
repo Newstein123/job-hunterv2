@@ -36,7 +36,7 @@ class ConversationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Storage::fake(Resume::DISK);
+        Storage::fake(Resume::disk());
         config(['services.ai.url' => 'http://ai.test', 'services.ai.token' => 'secret']);
         $this->travelTo('2026-09-30 10:00:00');
         $this->user = User::factory()->create();

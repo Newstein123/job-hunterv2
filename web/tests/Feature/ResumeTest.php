@@ -23,7 +23,7 @@ class ResumeTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Storage::fake(Resume::DISK);
+        Storage::fake(Resume::disk());
     }
 
     public function test_upload_list_and_download(): void
@@ -37,9 +37,28 @@ class ResumeTest extends TestCase
 
         $resume = $user->resumes()->first();
         $this->assertSame('backend_v3.pdf', $resume->original_filename);
-        Storage::disk(Resume::DISK)->assertExists($resume->path);
+        Storage::disk(Resume::disk())->assertExists($resume->path);
         $this->actingAs($user)->get(route('resumes.index'))->assertOk();
         $this->actingAs($user)->get(route('resumes.download', $resume))->assertDownload('backend_v3.pdf');
+    }
+
+    public function test_resumes_use_the_configured_disk(): void
+    {
+        config(['filesystems.resume_disk' => 'resumes-bucket']);
+        $bucket = Storage::fake('resumes-bucket');
+        $user = User::factory()->create();
+
+        $this->actingAs($user)->post(route('resumes.store'), [
+            'label' => 'Backend CV',
+            'file' => UploadedFile::fake()->create('backend_v3.pdf', 100, 'application/pdf'),
+        ])->assertSessionHasNoErrors();
+
+        $resume = $user->resumes()->first();
+        $bucket->assertExists($resume->path);
+        Storage::disk('local')->assertMissing($resume->path);
+        $this->actingAs($user)->get(route('resumes.download', $resume))->assertDownload('backend_v3.pdf');
+        $this->actingAs($user)->delete(route('resumes.destroy', $resume));
+        $bucket->assertMissing($resume->path);
     }
 
     public function test_rejects_unsupported_formats(): void

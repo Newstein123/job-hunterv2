@@ -49,7 +49,7 @@ class ReviewResume implements ShouldBeUnique, ShouldQueue
                 'resume' => [
                     'id' => (string) $this->resume->id,
                     'filename' => $this->resume->original_filename,
-                    'content_base64' => base64_encode((string) Storage::disk(Resume::DISK)->get($this->resume->path)),
+                    'content_base64' => base64_encode((string) Storage::disk(Resume::disk())->get($this->resume->path)),
                 ],
                 'candidate_name' => $user->careerProfile->full_name ?? $user->name,
                 'user_rules' => $user->applicationRule?->rules ?: null,
