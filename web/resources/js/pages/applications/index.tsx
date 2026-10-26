@@ -12,12 +12,7 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { formatDate } from '@/lib/format';
 import { cn } from '@/lib/utils';
-import type {
-    ApplicationRow,
-    CountryOption,
-    Option,
-    Paginated,
-} from '@/types';
+import type { ApplicationRow, CountryOption, Option, Paginated } from '@/types';
 
 type Filters = {
     status: string | null;

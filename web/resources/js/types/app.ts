@@ -304,7 +304,10 @@ export type ApplicationRow = {
 };
 
 export type EmailAccountStatus =
-    'active' | 'needs_reauth' | 'restricted' | 'disabled';
+    | 'active'
+    | 'needs_reauth'
+    | 'restricted'
+    | 'disabled';
 
 export type EmailAccount = {
     id: number;

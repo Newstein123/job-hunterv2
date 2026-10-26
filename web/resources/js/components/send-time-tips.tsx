@@ -16,15 +16,11 @@ export default function SendTimeTips({ className }: { className?: string }) {
             <Lightbulb className="mt-0.5 size-3.5 shrink-0" />
             <p>
                 Suggested times, in the employer's time:{' '}
-                <span className="font-medium text-foreground">
-                    06:30–10:30
-                </span>{' '}
+                <span className="font-medium text-foreground">06:30–10:30</span>{' '}
                 for jobs from job websites,{' '}
-                <span className="font-medium text-foreground">
-                    11:30–15:30
-                </span>{' '}
-                for other outreach, on working days. This is a suggestion
-                only. Emails go out when you schedule them.
+                <span className="font-medium text-foreground">11:30–15:30</span>{' '}
+                for other outreach, on working days. This is a suggestion only.
+                Emails go out when you schedule them.
             </p>
         </div>
     );
