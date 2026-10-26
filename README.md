@@ -39,6 +39,57 @@ Without a Gemini key you can still click through the whole flow with the **dev-o
 run `.venv/bin/python -m scripts.dev_fake_llm_server` in `ai-service/` instead of the real service. Its output
 is a fixed template and says nothing about real model quality.
 
+## AI service
+
+`composer dev` already starts it. To run it on its own:
+
+```bash
+cd ai-service
+
+# Locally (needs .env with GEMINI_API_KEY and AI_SERVICE_TOKEN)
+.venv/bin/uvicorn app.api.main:app --port 8001 --env-file .env --reload
+curl localhost:8001/health                     # {"status":"ok"}
+
+# In Docker, the same image that runs in production
+docker build -t jobhunter-ai .
+docker run --rm -p 8001:8001 --env-file .env jobhunter-ai
+```
+
+The image contains only `app/` and `requirements.txt` (see `.dockerignore`): course materials, examples and
+`.env` never go into it. Secrets are passed as environment variables.
+
+### Production: AWS Lambda
+
+Runs as the Lambda function `jobhunter-ai` (arm64, `ap-southeast-1`) behind a function URL, through the
+Lambda Web Adapter. Every `/v1` call still needs the `X-Service-Token` header. One-time setup (ECR repository,
+execution role, function, URL) is already done; deploy an update with:
+
+```bash
+cd ai-service
+REGION=ap-southeast-1
+REG=$(aws sts get-caller-identity --query Account --output text).dkr.ecr.$REGION.amazonaws.com
+TAG=$(date +%Y%m%d-%H%M)
+
+docker build --platform linux/arm64 --provenance=false -t jobhunter-ai:latest .
+aws ecr get-login-password --region $REGION | docker login -u AWS --password-stdin $REG
+docker tag jobhunter-ai:latest $REG/jobhunter-ai:$TAG && docker push $REG/jobhunter-ai:$TAG
+aws lambda update-function-code --region $REGION --function-name jobhunter-ai --image-uri $REG/jobhunter-ai:$TAG
+aws lambda wait function-updated-v2 --region $REGION --function-name jobhunter-ai
+
+# Check
+URL=$(aws lambda get-function-url-config --region $REGION --function-name jobhunter-ai --query FunctionUrl --output text)
+curl ${URL}health                              # {"status":"ok"}; first call after idle takes ~5 s
+```
+
+- `--provenance=false` matters: Lambda rejects the multi-arch manifest Docker builds by default.
+- Roll back: run `update-function-code` with an earlier tag (ECR keeps the last 5 images).
+- Logs: `aws logs tail /aws/lambda/jobhunter-ai --region ap-southeast-1 --since 15m --follow`
+- Change a secret (`GEMINI_API_KEY`, `AI_SERVICE_TOKEN`, …): Lambda console → `jobhunter-ai` →
+  Configuration → Environment variables. `update-function-configuration --environment` replaces *all*
+  variables, so include every one if you use the CLI.
+- Laravel needs `AI_SERVICE_URL` (the function URL without the trailing `/`), the same `AI_SERVICE_TOKEN`,
+  and `AI_SERVICE_TIMEOUT=120`.
+
 ## Connecting Gmail accounts
 
 Users can connect several Gmail accounts (Email accounts page). Each has its own daily limit and health status;
@@ -79,9 +130,9 @@ Done: AI pipeline (steps 1–10), FastAPI (step 11), Laravel core app (step 12):
 rules, generation, review → approve/edit/cancel, manual outcome tracking, status history.
 
 Also done: fit analysis for every added or imported job (job analysis + match + resume pick, no email,
-one Gemini call per job), with Strong / Partial / Weak filters and "Analyze all" on the Jobs page.
-Multiple Gmail accounts (OAuth), the email queue (window, daily limit, min gap, duplicate and
-recipient checks, retries, cancel), account health, and reply/bounce detection.
+one Gemini call per job), with Strong / Partial / Weak filters and "Analyze" for selected jobs on the Jobs page.
+Multiple Gmail accounts (OAuth), the email queue (send now or at a chosen time, daily limit, min gap,
+duplicate and recipient checks, retries, cancel), account health, and reply/bounce detection.
 
 Also done: reading replies (text, auto-reply/bounce detection), AI classification with quoted evidence and a
 suggested stage you confirm, and AI-drafted answers with [[placeholders]] for facts it doesn't have, sent in the
