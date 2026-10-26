@@ -9,12 +9,15 @@ use App\Http\Controllers\EmailAccountController;
 use App\Http\Controllers\JobBulkController;
 use App\Http\Controllers\JobImportController;
 use App\Http\Controllers\JobPostingController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\ReplyController;
 use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', [LegalController::class, 'home'])->name('home');
+Route::get('privacy', [LegalController::class, 'privacy'])->name('privacy');
+Route::get('terms', [LegalController::class, 'terms'])->name('terms');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', DashboardController::class)->name('dashboard');

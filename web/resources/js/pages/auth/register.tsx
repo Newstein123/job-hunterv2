@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import { login } from '@/routes';
+import { login, privacy, terms } from '@/routes';
 import { store } from '@/routes/register';
 
 type Props = {
@@ -100,6 +100,18 @@ export default function Register({ passwordRules }: Props) {
                                 Create account
                             </Button>
                         </div>
+
+                        <p className="text-center text-xs text-muted-foreground">
+                            By creating an account, you agree to the{' '}
+                            <TextLink href={terms()} target="_blank">
+                                Terms of Service
+                            </TextLink>{' '}
+                            and{' '}
+                            <TextLink href={privacy()} target="_blank">
+                                Privacy Policy
+                            </TextLink>
+                            .
+                        </p>
 
                         <div className="text-center text-sm text-muted-foreground">
                             Already have an account?{' '}

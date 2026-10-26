@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileDeleteRequest;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\EmailAccount;
+use App\Models\Resume;
+use App\Services\Mail\MailProvider;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -46,13 +50,20 @@ class ProfileController extends Controller
     /**
      * Delete the user's profile.
      */
-    public function destroy(ProfileDeleteRequest $request): RedirectResponse
+    /**
+     * Delete the account and everything in it. The database rows cascade; resume files and the
+     * Gmail access the user granted are removed here, as the Privacy Policy promises.
+     */
+    public function destroy(ProfileDeleteRequest $request, MailProvider $provider): RedirectResponse
     {
         $user = $request->user();
 
         Auth::logout();
 
+        $user->emailAccounts->each(fn (EmailAccount $account) => rescue(fn () => $provider->revoke($account), report: false));
+        $paths = $user->resumes()->pluck('path')->filter()->all();
         $user->delete();
+        rescue(fn () => Storage::disk(Resume::disk())->delete($paths), report: false);
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
