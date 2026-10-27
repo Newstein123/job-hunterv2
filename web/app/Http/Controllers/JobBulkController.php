@@ -67,7 +67,13 @@ class JobBulkController extends Controller
 
                 continue;
             }
-            $starter->start($user, $job);
+            try {
+                $starter->start($user, $job);
+            } catch (ValidationException $e) {
+                $skipped[] = $this->skip($job, (string) collect($e->errors())->flatten()->first());
+
+                continue;
+            }
             $started++;
         }
 

@@ -13,6 +13,7 @@ use App\Services\ApplicationStarter;
 use App\Services\Mail\EmailQueue;
 use App\Services\Mail\RecipientValidator;
 use App\Services\Mail\ReplyText;
+use App\Services\UsageLimits;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -233,10 +234,15 @@ class ApplicationController extends Controller
         return back();
     }
 
-    public function regenerate(Request $request, Application $application): RedirectResponse
+    public function regenerate(Request $request, Application $application, UsageLimits $limits): RedirectResponse
     {
         $this->ensureOwns($request, $application);
         abort_unless($application->status->isEditable() && ! $application->isGenerating(), 409);
+        if (! $limits->tryReserveDraft($request->user())) {
+            $this->toast($limits->draftLimitMessage(), 'error');
+
+            return back();
+        }
 
         $application->update(['generation_state' => Application::GENERATION_PENDING, 'generation_error' => null]);
         GenerateApplicationContent::dispatch($application);

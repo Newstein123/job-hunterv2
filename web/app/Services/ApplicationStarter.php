@@ -7,6 +7,7 @@ use App\Jobs\GenerateApplicationContent;
 use App\Models\Application;
 use App\Models\JobPosting;
 use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
 /**
  * Creates the (single) application for a job and queues AI drafting. The draft
@@ -14,8 +15,12 @@ use App\Models\User;
  */
 class ApplicationStarter
 {
+    public function __construct(private readonly UsageLimits $limits) {}
+
+    /** @throws ValidationException when the user's draft limit is reached */
     public function start(User $user, JobPosting $job): Application
     {
+        $this->limits->reserveDraft($user);
         $application = new Application([
             'generation_state' => Application::GENERATION_PENDING,
             'cc' => $job->cc_emails ?: null, // CC the posting asks for

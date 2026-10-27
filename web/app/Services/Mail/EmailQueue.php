@@ -7,6 +7,7 @@ use App\Models\Application;
 use App\Models\EmailAccount;
 use App\Models\EmailMessage;
 use App\Models\User;
+use App\Services\UsageLimits;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,10 @@ use Illuminate\Validation\ValidationException;
  */
 class EmailQueue
 {
-    public function __construct(private readonly RecipientValidator $recipients) {}
+    public function __construct(
+        private readonly RecipientValidator $recipients,
+        private readonly UsageLimits $limits,
+    ) {}
 
     /** @param  CarbonInterface|null  $notBefore  the time the user picked; null sends as soon as possible */
     public function queue(Application $application, EmailAccount $account, User $by, ?CarbonInterface $notBefore = null): EmailMessage
@@ -151,6 +155,7 @@ class EmailQueue
         if (! $application->resume) {
             $fail('resume_id', 'Choose a resume to attach.');
         }
+        $this->limits->assertCanSend($application->user);
 
         // Duplicate protection: one active send per application, and never the same email twice.
         // A bounced email never arrived, so it doesn't count.

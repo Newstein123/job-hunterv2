@@ -6,13 +6,14 @@ use App\Enums\ApplicationStatus;
 use App\Models\EmailAccount;
 use App\Models\EmailMessage;
 use App\Models\LlmUsage;
+use App\Services\UsageLimits;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, UsageLimits $limits): Response
     {
         $user = $request->user();
         $counts = $user->applications()->toBase()->selectRaw('status, count(*) as total')->groupBy('status')
@@ -25,6 +26,7 @@ class DashboardController extends Controller
             ->groupBy('task')->get();
 
         return Inertia::render('dashboard', [
+            'limits' => $limits->summary($user),
             'aiUsage' => [
                 'calls' => (int) $byTask->sum('calls'),
                 'cost_usd' => round((float) $byTask->sum('cost'), 4),

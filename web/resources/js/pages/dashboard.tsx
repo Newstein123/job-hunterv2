@@ -57,7 +57,51 @@ type Props = {
         company: string | null;
         since: string | null;
     }[];
+    limits: {
+        drafts: { used: number; limit: number | null };
+        sends: { used: number; limit: number | null };
+    };
 };
+
+function LimitRow({
+    label,
+    used,
+    limit,
+}: {
+    label: string;
+    used: number;
+    limit: number | null;
+}) {
+    if (limit === null) {
+        return null;
+    }
+    const pct = Math.min(100, Math.round((used / limit) * 100));
+
+    return (
+        <div className="grid gap-1.5">
+            <div className="flex justify-between gap-2">
+                <span>{label}</span>
+                <span className="text-muted-foreground tabular-nums">
+                    {used} / {limit}
+                </span>
+            </div>
+            <div
+                className="h-1.5 overflow-hidden rounded-full bg-muted"
+                role="progressbar"
+                aria-label={label}
+                aria-valuenow={used}
+                aria-valuemax={limit}
+            >
+                <div
+                    className={
+                        pct >= 90 ? 'h-full bg-amber-500' : 'h-full bg-primary'
+                    }
+                    style={{ width: `${pct}%` }}
+                />
+            </div>
+        </div>
+    );
+}
 
 export default function Dashboard({
     setup,
@@ -66,6 +110,7 @@ export default function Dashboard({
     alerts,
     awaitingReply,
     aiUsage,
+    limits,
 }: Props) {
     const steps = [
         {
@@ -249,6 +294,25 @@ export default function Dashboard({
                         </Link>
                     ))}
                 </div>
+
+                {(limits.drafts.limit !== null ||
+                    limits.sends.limit !== null) && (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Testing allowance</CardTitle>
+                        </CardHeader>
+                        <CardContent className="grid gap-4 text-sm">
+                            <LimitRow
+                                label="AI drafts (draft or regenerate)"
+                                {...limits.drafts}
+                            />
+                            <LimitRow
+                                label="Application emails sent"
+                                {...limits.sends}
+                            />
+                        </CardContent>
+                    </Card>
+                )}
 
                 <Card>
                     <CardHeader>

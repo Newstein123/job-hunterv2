@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Application;
 use App\Services\AiService\AiServiceException;
 use App\Services\AiService\ApplicationGenerator;
+use App\Services\UsageLimits;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -48,6 +49,7 @@ class GenerateApplicationContent implements ShouldBeUnique, ShouldQueue
 
     public function failed(?Throwable $e): void
     {
+        app(UsageLimits::class)->releaseDraft($this->application->user_id); // a failed draft doesn't count
         $this->application->update([
             'generation_state' => Application::GENERATION_FAILED,
             'generation_error' => $e instanceof AiServiceException ? $e->getMessage() : 'Generation failed. Please try again.',

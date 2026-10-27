@@ -1,5 +1,5 @@
 import { Form, Head, Link, usePage } from '@inertiajs/react';
-import { Upload } from 'lucide-react';
+import { Download, Upload } from 'lucide-react';
 import { useState } from 'react';
 import JobImportController from '@/actions/App/Http/Controllers/JobImportController';
 import JobPostingController from '@/actions/App/Http/Controllers/JobPostingController';
@@ -52,6 +52,10 @@ export default function ImportJobs({
     const result = usePage().flash.importResult;
     const [kind, setKind] = useState<'posting' | 'speculative'>('posting');
     const shown = kind === 'posting' ? columns : companyColumns;
+    const sample =
+        kind === 'posting'
+            ? '/samples/job-posts-sample.csv'
+            : '/samples/company-list-sample.csv';
 
     return (
         <>
@@ -98,7 +102,20 @@ export default function ImportJobs({
                             case-insensitive.
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="grid gap-4">
+                        <div className="flex flex-wrap items-center gap-3">
+                            <Button variant="outline" size="sm" asChild>
+                                <a href={sample} download>
+                                    <Download /> Download sample CSV
+                                </a>
+                            </Button>
+                            <span className="text-xs text-muted-foreground">
+                                Open it in Excel or Google Sheets, replace the
+                                example rows with your own, and upload it. The
+                                sample addresses are fake and can never be sent
+                                to.
+                            </span>
+                        </div>
                         <ul className="grid gap-1 text-sm">
                             {shown.map(([name, note]) => (
                                 <li key={name}>

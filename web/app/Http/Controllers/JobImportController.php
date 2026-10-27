@@ -54,11 +54,20 @@ class JobImportController extends Controller
 
         if ($speculative) {
             // No posting to analyze: draft each email straight away, for batch review.
+            $notDrafted = 0;
             foreach (JobPosting::whereKey($result['job_ids'])->get() as $job) {
-                $starter->start($user, $job);
+                try {
+                    $starter->start($user, $job);
+                } catch (ValidationException) {
+                    $notDrafted++; // draft limit reached; the company stays on the Jobs list
+                }
             }
             Inertia::flash('importResult', [...collect($result)->except('job_ids')->all(), 'analysis' => 'drafting', 'supported' => Country::active()->pluck('name')->all()]);
-            $this->toast("Imported {$result['imported']} compan(ies). Drafting emails for your review…", $result['errors'] || $result['unsupported_countries'] ? 'warning' : 'success');
+            $limited = $notDrafted > 0
+                ? " {$notDrafted} weren't drafted: you've used all your AI drafts for testing. They stay on the Jobs list."
+                : '';
+            $this->toast("Imported {$result['imported']} compan(ies). Drafting emails for your review…{$limited}",
+                $result['errors'] || $result['unsupported_countries'] || $limited ? 'warning' : 'success');
 
             return back();
         }
